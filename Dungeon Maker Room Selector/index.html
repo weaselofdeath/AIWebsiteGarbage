@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dungeon Maker Interactive Blueprint</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #d4d4d4; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { width: 300px; background: #252526; display: flex; flex-direction: column; border-right: 1px solid #333; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+        .sidebar-header { padding: 15px; background: #2d2d2d; border-bottom: 1px solid #333; }
+        .sidebar-header h3 { margin: 0 0 10px 0; color: #90EE90; font-size: 1.1em; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .search-box { width: 100%; padding: 8px; margin-top: 10px; background: #3c3c3c; border: 1px solid #555; color: white; border-radius: 4px; box-sizing: border-box; outline: none; }
+        .search-box:focus { border-color: #90EE90; }
+        
+        .room-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; }
+        .room-item { padding: 8px 15px; cursor: pointer; border-bottom: 1px solid #333; font-size: 0.9em; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .room-item:hover { background: #333; }
+        .room-item.active { background: #0e639c; color: white; border-left: 4px solid #90EE90; }
+        
+        .room-type-badge { font-size: 0.75em; padding: 2px 6px; border-radius: 4px; min-width: 35px; text-align: center; }
+        .badge-room { background: #3a5f3a; color: #90EE90; }
+        .badge-base { background: #5f4b3a; color: #FFC080; }
+        
+        /* Main Canvas */
+        .main { flex-grow: 1; position: relative; background: #1e1e1e; overflow: hidden; }
+        #network { width: 100%; height: 100%; opacity: 1; transition: opacity 0.3s ease-in-out; }
+        
+        /* Floating Panel (Top Left) */
+        .floating-panel {
+            position: absolute; top: 20px; left: 20px; width: 260px;
+            background: rgba(37, 37, 38, 0.95); border: 1px solid #555; border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); padding: 15px; z-index: 100;
+            backdrop-filter: blur(5px); max-height: 80vh; overflow-y: auto;
+            transition: opacity 0.3s;
+        }
+        .floating-panel * { pointer-events: auto; }
+        .panel-title { font-weight: bold; color: #90EE90; margin-bottom: 10px; border-bottom: 1px solid #555; padding-bottom: 5px; font-size: 1em; }
+        .stat-item { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.9em; }
+        .stat-item span:first-child { color: #FFC080; }
+        .empty-state { color: #777; font-style: italic; font-size: 0.9em; }
+
+        .checkbox-container { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444; font-size: 0.9em; }
+        .checkbox-container label { cursor: pointer; display: flex; align-items: center; color: #ccc; }
+        .checkbox-container input { margin-right: 8px; }
+
+        /* Loading Overlay */
+        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(30,30,30,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #90EE90; font-size: 1.5em; z-index: 200; transition: opacity 0.5s; pointer-events: none; opacity: 0; }
+        .loading-overlay.active { opacity: 1; pointer-events: all; }
+        .error-msg { color: #f48771; font-size: 0.7em; margin-top: 20px; max-width: 400px; text-align: center; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h3>Room Selector</h3>
+        <input type="text" id="searchBox" class="search-box" placeholder="Filter rooms..." onkeyup="filterRooms()">
+    </div>
+    <ul id="roomList" class="room-list"></ul>
+</div>
+
+<div class="main">
+    <div id="baseMaterialsPanel" class="floating-panel">
+        <div class="checkbox-container">
+            <label>
+                <input type="checkbox" id="toggleBaseNodes" onchange="refreshCurrentView()">
+                Show Base Nodes in Graph
+            </label>
+        </div>
+        <div class="panel-title">Total Base Materials</div>
+        <div id="legendContent" class="empty-state">Select a room...</div>
+    </div>
+    <div id="network"></div>
+    <div id="loading" class="loading-overlay active">
+        <div>Loading dm_rooms.csv...</div>
+        <div class="error-msg" id="errorDetails"></div>
+    </div>
+</div>
+
+<script>
+    // --- 1. DATA STATE ---
+    let recipes = {};
+    let usedIn = {};
+    let allRoomNames = [];
+    let network = null;
+    let nodesDS = new vis.DataSet();
+    let edgesDS = new vis.DataSet();
+    let currentRoot = "";
+    
+    // --- 2. INITIALIZATION ---
+    async function init() {
+        initNetwork();
+        
+        try {
+            const response = await fetch('dm_rooms.csv');
+            if (response.ok) {
+                const text = await response.text();
+                loadData(text);
+                return;
+            } else {
+                throw new Error("File not found or CORS blocked");
+            }
+        } catch (e) {
+            console.log("Auto-load failed.", e);
+            const loading = document.getElementById('loading');
+            loading.querySelector('div').textContent = "Load Failed";
+            const msg = document.getElementById('errorDetails');
+            msg.innerHTML = `
+                Could not load <b>dm_rooms.csv</b>.<br>
+                1. Ensure "dm_rooms.csv" is in the repo.<br>
+                2. If running locally, use a local server (vs code live server).
+            `;
+        }
+    }
+
+    function loadData(csvText) {
+        parseData(csvText);
+        renderRoomList();
+        document.getElementById('loading').classList.remove('active');
+        
+        if (allRoomNames.length > 0) {
+            const defaultRoom = allRoomNames.includes("Death Wave") ? "Death Wave" : allRoomNames[0];
+            transitionToRoom(defaultRoom);
+        }
+    }
+
+    // --- 3. PARSING ---
+    function parseData(csvText) {
+        recipes = {};
+        usedIn = {};
+        allRoomNames = [];
+
+        const lines = csvText.trim().split(/\r?\n/);
+        let startIndex = 1; 
+
+        for (let i = startIndex; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if(!line) continue;
+            
+            const parts = line.split(',').map(s => s.trim());
+            const target = parts[0];
+            if(!target) continue;
+
+            if(!allRoomNames.includes(target)) allRoomNames.push(target);
+
+            const mats = parts.slice(1).filter(m => m !== "");
+            recipes[target] = mats; 
+            
+            mats.forEach(mat => {
+                if (!usedIn[mat]) usedIn[mat] = [];
+                if (!usedIn[mat].includes(target)) usedIn[mat].push(target);
+                if (!allRoomNames.includes(mat)) allRoomNames.push(mat);
+            });
+        }
+        allRoomNames.sort();
+    }
+
+    function isBaseItem(name) {
+        return !recipes[name] || recipes[name].length === 0;
+    }
+
+    // --- 4. GRAPH BUILDER ---
+    function buildGraphData(rootName) {
+        const nodesMap = new Map();
+        const edgesArr = [];
+        const visited = new Set();
+        const queue = [rootName];
+        
+        const showBase = document.getElementById('toggleBaseNodes').checked;
+        const rootIsBase = isBaseItem(rootName);
+
+        // A. Left Side: Recipe Tree (Backwards)
+        // If we selected a base node specifically, it behaves as the root.
+        while(queue.length > 0) {
+            const curr = queue.shift();
+            if(visited.has(curr)) continue;
+            visited.add(curr);
+
+            const ingredients = recipes[curr] || [];
+            
+            nodesMap.set(curr, {
+                id: curr,
+                image: createNodeSVG(curr, ingredients, false),
+                shape: 'image',
+                isGhost: false
+            });
+
+            ingredients.forEach(child => {
+                // VISIBILITY: Only show base items if toggle is ON
+                if (isBaseItem(child) && !showBase) return;
+
+                edgesArr.push({ from: child, to: curr });
+                if(!visited.has(child)) queue.push(child);
+            });
+        }
+
+        // B. Right Side: Usage (Ghost Nodes)
+        // Forward connections (what uses the root)
+        const productList = usedIn[rootName] || [];
+        
+        productList.forEach(prod => {
+            if (nodesMap.has(prod)) return; // Avoid duplicates
+
+            const prodIngs = recipes[prod] || [];
+            nodesMap.set(prod, {
+                id: prod,
+                image: createNodeSVG(prod, prodIngs, true), // Ghost Node
+                shape: 'image',
+                physics: false,
+                isGhost: true
+            });
+
+            edgesArr.push({ 
+                from: rootName, 
+                to: prod, 
+                color: { color: '#666', opacity: 0.2 },
+                dashes: true,
+                arrows: 'to' 
+            });
+        });
+
+        return { nodes: Array.from(nodesMap.values()), edges: edgesArr };
+    }
+
+    function createNodeSVG(label, ingredients, isGhost = false) {
+        const width = 200;
+        const lineHeight = 20;
+        const titleHeight = 30;
+        const padding = 10;
+        
+        const counts = {};
+        (ingredients || []).forEach(i => counts[i] = (counts[i] || 0) + 1);
+        const uniqueIngs = Object.keys(counts);
+        
+        let contentHeight = (uniqueIngs.length * lineHeight) + padding;
+        if (uniqueIngs.length === 0) contentHeight = 30; 
+
+        const totalHeight = titleHeight + contentHeight;
+
+        const opacity = isGhost ? 0.6 : 1.0;
+        const strokeDash = isGhost ? 'stroke-dasharray="6,4"' : '';
+        const bgColor = isGhost ? '#2A2A2B' : '#3C3F41';
+        const borderColor = isGhost ? '#666' : '#5A5D5F';
+        const safeLabel = label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        let svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${totalHeight}" style="opacity: ${opacity}">
+            <style>
+                .title { font-family: 'Segoe UI', Arial; font-weight: bold; font-size: 14px; fill: #90EE90; text-anchor: middle; }
+                .text-base { font-family: 'Segoe UI', Arial; font-size: 12px; fill: #FFC080; }
+                .text-room { font-family: 'Segoe UI', Arial; font-size: 12px; fill: #A9B7C6; }
+                .text-meta { font-family: 'Segoe UI', Arial; font-size: 11px; fill: #777; font-style: italic; }
+                .bg { fill: ${bgColor}; stroke: ${borderColor}; stroke-width: 2px; }
+            </style>
+            
+            <rect x="0" y="0" width="${width}" height="${totalHeight}" rx="4" ry="4" class="bg" ${strokeDash} />
+            <text x="${width/2}" y="20" class="title">${safeLabel}</text>
+            <line x1="0" y1="${titleHeight}" x2="${width}" y2="${titleHeight}" stroke="${borderColor}" stroke-width="1" />
+        `;
+
+        let yPos = titleHeight + 18;
+        
+        if (uniqueIngs.length === 0) {
+            const text = isGhost ? "Builds This" : "Base Material";
+            svg += `<text x="${width/2}" y="${yPos}" class="text-meta" text-anchor="middle">${text}</text>`;
+        } else {
+            uniqueIngs.forEach(ing => {
+                const isBase = isBaseItem(ing);
+                const count = counts[ing];
+                const text = count > 1 ? `${ing} x${count}` : ing;
+                const cssClass = isBase ? "text-base" : "text-room";
+                svg += `<text x="10" y="${yPos}" class="${cssClass}">${text}</text>`;
+                yPos += lineHeight;
+            });
+        }
+        svg += `</svg>`;
+        return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
+    // --- 5. VIS.JS SETUP ---
+    function initNetwork() {
+        const container = document.getElementById('network');
+        const data = { nodes: nodesDS, edges: edgesDS };
+        const options = {
+            layout: {
+                hierarchical: {
+                    enabled: true,
+                    direction: 'LR',
+                    sortMethod: 'directed',
+                    levelSeparation: 220,
+                    nodeSpacing: 100,
+                    treeSpacing: 150,
+                    blockShifting: true,
+                    edgeMinimization: true,
+                    parentCentralization: true,
+                    shakeTowards: 'roots'
+                }
+            },
+            physics: { enabled: false }, 
+            edges: {
+                width: 2,
+                color: { color: 'rgba(169, 183, 198, 0.15)', highlight: '#90EE90' }, // faint lines
+                arrows: { to: { enabled: true, scaleFactor: 1 } },
+                smooth: { type: 'cubicBezier', forceDirection: 'horizontal', roundness: 0.5 }
+            },
+            interaction: { dragNodes: true, zoomView: true, dragView: true, hover: true }
+        };
+        network = new vis.Network(container, data, options);
+        
+        // CLICK: Highlight Only (unless Ghost)
+        network.on("click", function(params) {
+            if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                const nodeData = nodesDS.get(nodeId);
+                // Ghost Node -> Immediate Transition
+                if (nodeData && nodeData.isGhost) {
+                    transitionToRoom(nodeId);
+                }
+                // Normal Node -> Do nothing (Vis.js highlights it automatically)
+            }
+        });
+
+        // DOUBLE CLICK: Navigate
+        network.on("doubleClick", function(params) {
+             if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                transitionToRoom(nodeId);
+             }
+        });
+        
+        network.on("hoverNode", function () { container.style.cursor = 'pointer'; });
+        network.on("blurNode", function () { container.style.cursor = 'default'; });
+    }
+
+    // --- 6. TRANSITION & UPDATE LOGIC ---
+    function refreshCurrentView() {
+        if(currentRoot) transitionToRoom(currentRoot);
+    }
+
+    function transitionToRoom(name) {
+        currentRoot = name;
+        
+        document.querySelectorAll('.room-item').forEach(el => {
+            el.classList.remove('active');
+            if(el.dataset.name === name) {
+                el.classList.add('active');
+                el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+
+        updateLegend(name);
+        
+        // 1. Re-enable hierarchy for layout calculation
+        network.setOptions({ layout: { hierarchical: { enabled: true } } });
+
+        // 2. Build Data
+        const newGraph = buildGraphData(name);
+        
+        // 3. Diff Update
+        const currentIds = nodesDS.getIds();
+        const newIds = newGraph.nodes.map(n => n.id);
+        
+        nodesDS.remove(currentIds.filter(id => !newIds.includes(id)));
+        nodesDS.update(newGraph.nodes);
+        edgesDS.clear();
+        edgesDS.add(newGraph.edges);
+
+        // 4. Fit & Unlock
+        setTimeout(() => {
+            network.fit({ 
+                animation: { duration: 600, easingFunction: 'easeInOutQuad' } 
+            });
+            
+            // Unlock physics/layout after animation to allow free dragging
+            setTimeout(() => {
+                network.setOptions({ layout: { hierarchical: { enabled: false } } });
+            }, 600);
+            
+        }, 50);
+    }
+
+    // --- 7. SIDEBAR & LEGEND ---
+    function renderRoomList(filter = "") {
+        const list = document.getElementById('roomList');
+        list.innerHTML = "";
+        
+        const filtered = allRoomNames.filter(n => n.toLowerCase().includes(filter.toLowerCase()));
+        
+        filtered.forEach(name => {
+            const isBase = isBaseItem(name);
+            const li = document.createElement('li');
+            li.className = "room-item";
+            li.dataset.name = name;
+            li.onclick = () => transitionToRoom(name);
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = name;
+            
+            const badge = document.createElement('span');
+            badge.className = `room-type-badge ${isBase ? 'badge-base' : 'badge-room'}`;
+            badge.textContent = isBase ? "Base" : "Room";
+
+            li.appendChild(nameSpan);
+            li.appendChild(badge);
+            list.appendChild(li);
+        });
+    }
+
+    function filterRooms() {
+        renderRoomList(document.getElementById('searchBox').value);
+    }
+
+    function updateLegend(rootName) {
+        const div = document.getElementById('legendContent');
+        const counts = getBaseCountsRecursive(rootName);
+        
+        if (Object.keys(counts).length === 0) {
+             div.innerHTML = `<span class="empty-state">No base materials required.</span>`;
+             return;
+        }
+
+        let html = "";
+        Object.keys(counts).sort().forEach(k => {
+            html += `<div class="stat-item"><span>${k}</span> <span>x${counts[k]}</span></div>`;
+        });
+        div.innerHTML = html;
+    }
+
+    function getBaseCountsRecursive(node, visited = new Set()) {
+        let total = {};
+        if (isBaseItem(node)) {
+            total[node] = 1;
+            return total;
+        }
+        if (visited.has(node)) return {};
+        visited.add(node);
+
+        const ingredients = recipes[node] || [];
+        ingredients.forEach(childName => {
+            const childTotals = getBaseCountsRecursive(childName, new Set(visited));
+            Object.keys(childTotals).forEach(base => {
+                total[base] = (total[base] || 0) + childTotals[base];
+            });
+        });
+        return total;
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
