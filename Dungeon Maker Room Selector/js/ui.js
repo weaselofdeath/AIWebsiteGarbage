@@ -1,56 +1,155 @@
 // Global State for UI
 let selectedNodeId = null;
+let folderStates = {}; 
+
+function getRoomTypeCategory(name) {
+    let type = "Room";
+    if (isBaseItem(name)) type = "Base";
+    if (roomTypes[name]) type = roomTypes[name];
+    return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+function expandFolderForRoom(name) {
+    const type = getRoomTypeCategory(name);
+    folderStates[type] = true;
+}
 
 // --- SIDEBAR ---
-function renderRoomList(filter = "") {
+function renderRoomList() {
     const list = document.getElementById('roomList');
     list.innerHTML = "";
-    const filtered = allRoomNames.filter(n => n.toLowerCase().includes(filter.toLowerCase()));
     
-    filtered.forEach(name => {
-        const isBase = isBaseItem(name);
-        const li = document.createElement('li');
-        li.className = "room-item";
-        li.dataset.name = name;
-        li.onclick = () => transitionToRoom(name);
-        
-        const imgUrl = roomImages[name];
-        if (imgUrl) {
-            const icon = document.createElement('img');
-            icon.src = imgUrl;
-            icon.className = "room-list-icon";
-            li.appendChild(icon);
-        } else {
-            const placeholder = document.createElement('div');
-            placeholder.className = "room-list-icon";
-            li.appendChild(placeholder);
-        }
+    const groups = {};
+    allRoomNames.forEach(name => {
+        const type = getRoomTypeCategory(name);
+        if (!groups[type]) groups[type] = [];
+        groups[type].push(name);
+    });
+    
+    const sortedKeys = Object.keys(groups).sort();
 
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = name;
+    sortedKeys.forEach(type => {
+        const folderLi = document.createElement('li');
+        folderLi.className = "folder-container";
         
-        // --- BADGE LOGIC ---
-        const badge = document.createElement('div');
-        let typeText = isBase ? "Base" : "Room";
-        let typeClass = isBase ? "badge-base" : "badge-room";
+        const header = document.createElement('div');
+        header.className = "folder-header"; 
         
-        if (roomTypes[name]) {
-            typeText = roomTypes[name];
-            typeClass = `badge-${typeText.toLowerCase().replace(/_/g, '-')}`; 
-        }
+        header.onclick = () => {
+             const isNowExpanded = header.classList.toggle('expanded');
+             folderStates[type] = isNowExpanded; 
 
-        badge.className = `room-type-badge ${typeClass}`;
-        badge.textContent = typeText;
+             const content = header.nextElementSibling;
+             if (isNowExpanded) {
+                 content.style.maxHeight = content.scrollHeight + "px";
+             } else {
+                 content.style.maxHeight = "0";
+             }
+        };
+
+        const count = groups[type].length;
+        header.innerHTML = `
+            <span class="folder-arrow">▶</span> 
+            <span class="folder-title">${type}</span> 
+            <span class="folder-count">${count}</span>
+        `;
+        folderLi.appendChild(header);
+
+        const itemsUl = document.createElement('ul');
+        itemsUl.className = "folder-items";
         
-        li.appendChild(badge);
-        li.appendChild(nameSpan);
-        list.appendChild(li);
+        groups[type].forEach(name => {
+            const itemLi = createRoomItem(name);
+            itemsUl.appendChild(itemLi);
+        });
+        
+        folderLi.appendChild(itemsUl);
+        list.appendChild(folderLi);
     });
 }
 
-function filterRooms() { renderRoomList(document.getElementById('searchBox').value); }
+function filterRooms() {
+    const term = document.getElementById('searchBox').value.toLowerCase();
+    const folders = document.querySelectorAll('.folder-container');
+    
+    folders.forEach(folder => {
+        const items = folder.querySelectorAll('.room-item');
+        let hasVisible = false;
 
-// --- LEGEND ---
+        items.forEach(item => {
+            const name = item.dataset.name.toLowerCase();
+            if (name.includes(term)) {
+                item.classList.remove('hidden');
+                hasVisible = true;
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+
+        const header = folder.querySelector('.folder-header');
+        const list = folder.querySelector('.folder-items');
+
+        if (term === "") {
+            folder.classList.remove('hidden');
+            header.classList.remove('search-expanded'); 
+            
+            if (header.classList.contains('expanded')) {
+                list.style.maxHeight = list.scrollHeight + "px";
+            } else {
+                list.style.maxHeight = "0";
+            }
+        } else {
+            if (hasVisible) {
+                folder.classList.remove('hidden');
+                header.classList.add('search-expanded'); 
+                list.style.maxHeight = list.scrollHeight + "px"; 
+            } else {
+                folder.classList.add('hidden');
+            }
+        }
+    });
+}
+
+function createRoomItem(name) {
+    const isBase = isBaseItem(name);
+    const li = document.createElement('li');
+    li.className = "room-item";
+    li.dataset.name = name;
+    li.onclick = () => transitionToRoom(name);
+    
+    const imgUrl = roomImages[name];
+    if (imgUrl) {
+        const icon = document.createElement('img');
+        icon.src = imgUrl;
+        icon.className = "room-list-icon";
+        li.appendChild(icon);
+    } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = "room-list-icon";
+        li.appendChild(placeholder);
+    }
+
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = name;
+    
+    const badge = document.createElement('div');
+    let typeText = isBase ? "Base" : "Room";
+    let typeClass = isBase ? "badge-base" : "badge-room";
+    
+    if (roomTypes[name]) {
+        typeText = roomTypes[name];
+        typeClass = `badge-${typeText.toLowerCase().replace(/_/g, '-')}`; 
+    }
+
+    badge.className = `room-type-badge ${typeClass}`;
+    badge.textContent = typeText;
+    
+    li.appendChild(badge);
+    li.appendChild(nameSpan);
+    
+    return li;
+}
+
 function updateLegend(rootName) {
     const div = document.getElementById('legendContent');
     const counts = getBaseCountsRecursive(rootName);
@@ -81,19 +180,53 @@ function getBaseCountsRecursive(node, visited = new Set()) {
 
 // --- PREVIEW WINDOW ---
 function showPreview(nodeId, isSticky = false) {
-    // If locked to a node, ignore hover events from other nodes
     if (selectedNodeId && !isSticky && selectedNodeId !== nodeId) return;
-    
-    // Lock the selection if sticky (clicked)
     if (isSticky) selectedNodeId = nodeId;
 
     const nodeData = nodesDS.get(nodeId);
     if(!nodeData) return;
     
     const previewDiv = document.getElementById('nodePreview');
-    const contentDiv = document.getElementById('previewContent');
     
-    // 1. Build Content HTML
+    // BUILD HEADER
+    const closeBtn = `<button class="preview-close-btn" onclick="clearSelection()">×</button>`;
+    const headerHtml = `
+        <div class="preview-header">
+            Node Details
+            ${closeBtn}
+        </div>`;
+
+    // CASE A: SUMMARY NODE
+    if (nodeData.isSummary) {
+        // ENABLE FULL HEIGHT
+        previewDiv.classList.add('summary-mode');
+
+        const list = nodeData.summaryList || [];
+        let listItems = "";
+        list.forEach(name => {
+            const safeName = name.replace(/'/g, "\\'"); 
+            listItems += `
+                <div class="preview-summary-item" onclick="transitionToRoom('${safeName}')">
+                    <span>${name}</span> <span>➔</span>
+                </div>`;
+        });
+
+        previewDiv.innerHTML = `
+            ${headerHtml}
+            <div class="preview-body">
+                <div class="preview-details">
+                    <div class="preview-title">Used In (${list.length} Rooms)</div>
+                    <div class="preview-summary-list">${listItems}</div>
+                </div>
+            </div>
+        `;
+        previewDiv.classList.add('visible');
+        return;
+    }
+
+    // CASE B: NORMAL NODE (Compact Height)
+    previewDiv.classList.remove('summary-mode');
+
     const imgSrc = roomImages[nodeId] || "";
     const ingredients = recipes[nodeId] || [];
     let matHtml = "";
@@ -116,7 +249,22 @@ function showPreview(nodeId, isSticky = false) {
         });
     }
 
-    contentDiv.innerHTML = `
+    // BUTTONS
+    let buttonsHtml = "";
+    if (isSticky) {
+        const safeId = nodeId.replace(/'/g, "\\'");
+        buttonsHtml = `
+            <div class="preview-actions">
+                <button class="preview-btn" data-tooltip="Go To Node" onclick="performAction('goto', '${safeId}')">🚀</button>
+                <button class="preview-btn" data-tooltip="Open Wiki Page" onclick="performAction('wiki', '${safeId}')">📖</button>
+                <button class="preview-btn" data-tooltip="Center Camera" onclick="performAction('focus', '${safeId}')">🔍</button>
+                <button class="preview-btn" data-tooltip="Copy Name" onclick="performAction('copy', '${safeId}')">📋</button>
+            </div>
+        `;
+    }
+
+    previewDiv.innerHTML = `
+        ${headerHtml}
         <div class="preview-body">
             ${imgSrc ? `<img src="${imgSrc}" class="preview-icon">` : '<div class="preview-icon"></div>'}
             <div class="preview-details">
@@ -124,38 +272,13 @@ function showPreview(nodeId, isSticky = false) {
                 ${matHtml}
             </div>
         </div>
+        ${buttonsHtml}
     `;
-
-    // 2. Handle Buttons via DOM (Prevents string escaping crashes)
-    // First, remove any existing action panel
-    const existingActions = previewDiv.querySelector('.preview-actions');
-    if (existingActions) existingActions.remove();
-
-    if (isSticky) {
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'preview-actions';
-
-        const createBtn = (text, action) => {
-            const btn = document.createElement('button');
-            btn.className = 'preview-btn';
-            btn.textContent = text;
-            btn.onclick = () => performAction(action, nodeId);
-            return btn;
-        };
-
-        actionsDiv.appendChild(createBtn('🚀 Go To', 'goto'));
-        actionsDiv.appendChild(createBtn('📖 Wiki', 'wiki'));
-        actionsDiv.appendChild(createBtn('🔍 Focus', 'focus'));
-        actionsDiv.appendChild(createBtn('📋 Copy', 'copy'));
-
-        previewDiv.appendChild(actionsDiv);
-    }
 
     previewDiv.classList.add('visible');
 }
 
 function hidePreview() {
-    // If a node is locked, do not hide on hover-out (blur)
     if (selectedNodeId) return;
     document.getElementById('nodePreview').classList.remove('visible');
 }

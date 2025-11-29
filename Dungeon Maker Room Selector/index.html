@@ -17,6 +17,17 @@
 </div>
 
 <div class="main" id="mainContainer">
+    <div id="emptyStateMessage">Please select a room</div>
+
+    <div class="control-legend">
+        <h4>Controls</h4>
+        <div class="control-item"><span class="key">L-Click</span> Select / Lock</div>
+        <div class="control-item"><span class="key">Drag</span> Pan / Move Node</div>
+        <div class="control-item"><span class="key">Scroll</span> Zoom</div>
+        <div class="control-item"><span class="key">Dbl-Click</span> Go To Room</div>
+        <div class="control-item"><span class="key">R-Click</span> Context Menu</div>
+    </div>
+
     <div id="baseMaterialsPanel" class="floating-panel">
         <div class="checkbox-container">
             <label>
@@ -28,10 +39,7 @@
         <div id="legendContent" class="empty-state">Select a room...</div>
     </div>
 
-    <div id="nodePreview" class="node-preview">
-        <div class="preview-header">Node Details</div>
-        <div id="previewContent"></div>
-    </div>
+    <div id="nodePreview" class="node-preview"></div>
 
     <div id="contextMenu" class="context-menu">
         <div class="context-item" onclick="handleContextAction('goto')">🚀 Go To Node</div>

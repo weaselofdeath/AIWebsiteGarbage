@@ -25,11 +25,7 @@ function loadData(csvText) {
     parseData(csvText);
     renderRoomList();
     document.getElementById('loading').classList.remove('active');
-    
-    if (allRoomNames.length > 0) {
-        const defaultRoom = allRoomNames.includes("Death Wave") ? "Death Wave" : allRoomNames[0];
-        transitionToRoom(defaultRoom);
-    }
+    // REMOVED AUTO-LOAD LOGIC
 }
 
 function refreshCurrentView() {
@@ -40,14 +36,47 @@ function refreshCurrentView() {
 async function transitionToRoom(name) {
     currentRoot = name;
     
-    // Sidebar highlight
-    document.querySelectorAll('.room-item').forEach(el => {
-        el.classList.remove('active');
-        if(el.dataset.name === name) {
-            el.classList.add('active');
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Hide Empty State Message
+    const emptyMsg = document.getElementById('emptyStateMessage');
+    if (emptyMsg) emptyMsg.style.display = 'none';
+
+    // --- SIDEBAR HIGHLIGHT & FOLDER EXPANSION ---
+    // 1. Update Global Folder State (Persistence)
+    if (window.expandFolderForRoom) {
+        expandFolderForRoom(name);
+    }
+
+    // 2. Reset all active states
+    const allItems = document.querySelectorAll('.room-item');
+    allItems.forEach(el => el.classList.remove('active'));
+
+    // 3. Find the active item
+    const activeItem = Array.from(allItems).find(el => el.dataset.name === name);
+    
+    if (activeItem) {
+        activeItem.classList.add('active');
+        
+        // 4. Auto-expand parent folder (Visual Update)
+        const folderList = activeItem.closest('.folder-items');
+        if (folderList) {
+            const folderHeader = folderList.previousElementSibling;
+            
+            // CHECK: Only expand if NOT already expanded
+            if (folderHeader && !folderHeader.classList.contains('expanded')) {
+                // Open it visually
+                folderHeader.classList.add('expanded');
+                folderList.style.maxHeight = folderList.scrollHeight + "px";
+                
+                // Delay scroll to allow animation to finish
+                setTimeout(() => {
+                    activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 300);
+            } else {
+                // Already open? Scroll immediately (No delay)
+                activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
-    });
+    }
 
     // 1. Preload Images
     await preloadImagesForTree(name);
@@ -62,7 +91,6 @@ async function transitionToRoom(name) {
     await new Promise(r => setTimeout(r, 100)); // Short fade
 
     // 4. Lock Layout for Calculation
-    // We enforce cubicBezier/horizontal here to ensure the tree builds beautifully
     network.setOptions({ 
         layout: { hierarchical: { enabled: true } },
         edges: { smooth: { type: 'cubicBezier', forceDirection: 'horizontal', roundness: 0.5 } }
@@ -85,7 +113,6 @@ async function transitionToRoom(name) {
         
         // 7. Unlock for free movement
         setTimeout(() => {
-            // Disable hierarchy and switch edges to 'continuous' for natural bending when dragged
             network.setOptions({ 
                 layout: { hierarchical: { enabled: false } },
                 edges: { smooth: { type: 'continuous', forceDirection: 'none' } }
