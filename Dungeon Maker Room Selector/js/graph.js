@@ -2,27 +2,41 @@ let network = null;
 let nodesDS = new vis.DataSet();
 let edgesDS = new vis.DataSet();
 
+// Type Color Mapping (Must match CSS roughly)
+const typeColors = {
+    'base': '#5f4b3a',
+    'room': '#3a5f3a',
+    'event': '#6a4c93',
+    'trap': '#804000',
+    'facility': '#205070',
+    'battle': '#702020',
+    'prison': '#404040',
+    'altar': '#605020'
+};
+
 // --- SVG NODE GENERATOR ---
 function createNodeSVG(label, ingredients, isGhost = false) {
     const width = 400; 
     const padding = 15;
     const lineHeight = 24;
     
+    // Determine Type & Color
+    let typeKey = "room";
+    if (roomTypes[label]) {
+        typeKey = roomTypes[label].toLowerCase();
+    } else if (isBaseItem(label)) {
+        typeKey = "base";
+    }
+    const ribbonColor = typeColors[typeKey] || '#373738'; 
+
     const counts = {};
     (ingredients || []).forEach(i => counts[i] = (counts[i] || 0) + 1);
     const uniqueIngs = Object.keys(counts);
     
     // Calculate Dynamic Height
-    // Base height needs to fit icon (80px) + padding (30px) = 110px min
-    // Ingredient list adds height.
-    // 4 items * 24px = 96px list height.
-    // Title area = ~30px.
-    
     let listHeight = uniqueIngs.length * lineHeight;
     if (uniqueIngs.length === 0) listHeight = 25; 
     
-    // Smart Height Calculation
-    // We ensure the card is tall enough for EITHER the icon OR the list
     const contentHeight = Math.max(80, listHeight + 35); 
     const totalHeight = contentHeight + (padding * 2);
     const iconSize = contentHeight;
@@ -49,6 +63,8 @@ function createNodeSVG(label, ingredients, isGhost = false) {
         
         <rect x="0" y="0" width="${width}" height="${totalHeight}" rx="8" ry="8" class="bg" ${strokeDash} />
         
+        <path d="M 0,8 Q 0,0 8,0 L 392,0 Q 400,0 400,8 L 400,12 L 0,12 Z" fill="${ribbonColor}" />
+        
         <rect x="${padding}" y="${padding}" width="${contentHeight}" height="${contentHeight}" rx="4" ry="4" class="icon-bg" />
         ${mainImg ? `<image x="${padding}" y="${padding}" width="${contentHeight}" height="${contentHeight}" href="${mainImg}" preserveAspectRatio="xMidYMid slice"/>` : ''}
 
@@ -62,10 +78,10 @@ function createNodeSVG(label, ingredients, isGhost = false) {
     let xPos = padding + iconSize + 15;
     
     if (uniqueIngs.length === 0) {
-        const text = isGhost ? "Builds This" : "Base Material";
-        svg += `<text x="${xPos}" y="${yPos}" class="text-meta">${text}</text>`;
+        let metaText = isGhost ? "Builds This" : "Base Material";
+        if (typeKey === 'event') metaText = "Event / Unlock";
+        svg += `<text x="${xPos}" y="${yPos}" class="text-meta">${metaText}</text>`;
     } else {
-        // Iterate ALL ingredients (no slice limit now)
         uniqueIngs.forEach(ing => {
             const isBase = isBaseItem(ing);
             const count = counts[ing];
@@ -99,7 +115,7 @@ function initNetwork() {
                 direction: 'LR',
                 sortMethod: 'directed',
                 levelSeparation: 380, 
-                nodeSpacing: 160, // INCREASED spacing for taller nodes
+                nodeSpacing: 160,
                 treeSpacing: 180,
                 blockShifting: true,
                 edgeMinimization: true,
@@ -123,10 +139,25 @@ function initNetwork() {
     // --- EVENTS ---
     network.on("click", function(params) {
         hideContextMenu();
-        if (params.nodes.length > 0) {
-            const nodeId = params.nodes[0];
-            const nodeData = nodesDS.get(nodeId);
-            if (nodeData && nodeData.isGhost) transitionToRoom(nodeId);
+        try {
+            if (params.nodes.length > 0) {
+                // Clicked a Node -> Lock Preview
+                const nodeId = params.nodes[0];
+                const nodeData = nodesDS.get(nodeId);
+                
+                // If it's a ghost node, we might want to navigate
+                if (nodeData && nodeData.isGhost) {
+                    transitionToRoom(nodeId);
+                } else {
+                    // Otherwise, show details with buttons (Persistent)
+                    showPreview(nodeId, true); 
+                }
+            } else {
+                // Clicked Background -> Unlock Preview
+                clearSelection();
+            }
+        } catch (e) {
+            console.error("Click handler error:", e);
         }
     });
 
@@ -137,7 +168,8 @@ function initNetwork() {
     network.on("hoverNode", function (params) {
         if (!document.getElementById('contextMenu').classList.contains('visible')) {
             container.style.cursor = 'pointer';
-            showPreview(params.node);
+            // Show preview only if we aren't locked onto another node
+            showPreview(params.node, false);
         }
     });
     

@@ -1,3 +1,6 @@
+// Global State for UI
+let selectedNodeId = null;
+
 // --- SIDEBAR ---
 function renderRoomList(filter = "") {
     const list = document.getElementById('roomList');
@@ -26,37 +29,21 @@ function renderRoomList(filter = "") {
         const nameSpan = document.createElement('span');
         nameSpan.textContent = name;
         
-        // BADGE LOGIC
-        const badge = document.createElement('span');
-        
-        // Default Type
+        // --- BADGE LOGIC ---
+        const badge = document.createElement('div');
         let typeText = isBase ? "Base" : "Room";
         let typeClass = isBase ? "badge-base" : "badge-room";
         
-        // Override from CSV "type" column if present
         if (roomTypes[name]) {
             typeText = roomTypes[name];
-            // Normalize class name (e.g. "event" -> "badge-event")
-            // We can style these specifically in CSS later
             typeClass = `badge-${typeText.toLowerCase().replace(/_/g, '-')}`; 
-            
-            // Fallback style if specific class doesn't exist? 
-            // For now, let's just stick to a generic style or reuse existing if appropriate.
-            // If it's an event, maybe purple?
-            // For now I'll just apply the class. You might want to add .badge-event to CSS.
         }
 
         badge.className = `room-type-badge ${typeClass}`;
         badge.textContent = typeText;
         
-        // Inline fallback style for new types (optional, to ensure they look okay immediately)
-        if (roomTypes[name] === 'event') {
-            badge.style.backgroundColor = '#6a4c93'; // Purple for events
-            badge.style.color = '#e0c3fc';
-        }
-
-        li.appendChild(nameSpan);
         li.appendChild(badge);
+        li.appendChild(nameSpan);
         list.appendChild(li);
     });
 }
@@ -93,15 +80,24 @@ function getBaseCountsRecursive(node, visited = new Set()) {
 }
 
 // --- PREVIEW WINDOW ---
-function showPreview(nodeId) {
+function showPreview(nodeId, isSticky = false) {
+    // If locked to a node, ignore hover events from other nodes
+    if (selectedNodeId && !isSticky && selectedNodeId !== nodeId) return;
+    
+    // Lock the selection if sticky (clicked)
+    if (isSticky) selectedNodeId = nodeId;
+
     const nodeData = nodesDS.get(nodeId);
     if(!nodeData) return;
+    
     const previewDiv = document.getElementById('nodePreview');
     const contentDiv = document.getElementById('previewContent');
-    const imgSrc = roomImages[nodeId] || "";
     
+    // 1. Build Content HTML
+    const imgSrc = roomImages[nodeId] || "";
     const ingredients = recipes[nodeId] || [];
     let matHtml = "";
+    
     if (ingredients.length === 0) {
         matHtml = `<div class="preview-mat base">Base Material</div>`;
     } else {
@@ -129,14 +125,54 @@ function showPreview(nodeId) {
             </div>
         </div>
     `;
+
+    // 2. Handle Buttons via DOM (Prevents string escaping crashes)
+    // First, remove any existing action panel
+    const existingActions = previewDiv.querySelector('.preview-actions');
+    if (existingActions) existingActions.remove();
+
+    if (isSticky) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'preview-actions';
+
+        const createBtn = (text, action) => {
+            const btn = document.createElement('button');
+            btn.className = 'preview-btn';
+            btn.textContent = text;
+            btn.onclick = () => performAction(action, nodeId);
+            return btn;
+        };
+
+        actionsDiv.appendChild(createBtn('🚀 Go To', 'goto'));
+        actionsDiv.appendChild(createBtn('📖 Wiki', 'wiki'));
+        actionsDiv.appendChild(createBtn('🔍 Focus', 'focus'));
+        actionsDiv.appendChild(createBtn('📋 Copy', 'copy'));
+
+        previewDiv.appendChild(actionsDiv);
+    }
+
     previewDiv.classList.add('visible');
 }
 
 function hidePreview() {
+    // If a node is locked, do not hide on hover-out (blur)
+    if (selectedNodeId) return;
     document.getElementById('nodePreview').classList.remove('visible');
 }
 
-// --- CONTEXT MENU ---
+function clearSelection() {
+    selectedNodeId = null;
+    hidePreview();
+}
+
+function performAction(action, targetId) {
+    if (action === 'goto') transitionToRoom(targetId);
+    else if (action === 'focus') network.focus(targetId, { scale: 1.2, animation: { duration: 500, easingFunction: 'easeInOutQuad' } });
+    else if (action === 'copy') navigator.clipboard.writeText(targetId);
+    else if (action === 'wiki') window.open(getWikiLink(targetId), '_blank');
+}
+
+// --- CONTEXT MENU (Legacy Support) ---
 function showContextMenu(x, y) {
     const menu = document.getElementById('contextMenu');
     const container = document.getElementById('mainContainer');
@@ -158,10 +194,6 @@ function hideContextMenu() {
 
 function handleContextAction(action) {
     if (!contextNodeId) return;
-    const targetId = contextNodeId;
+    performAction(action, contextNodeId);
     hideContextMenu();
-    if (action === 'goto') transitionToRoom(targetId);
-    else if (action === 'focus') network.focus(targetId, { scale: 1.2, animation: { duration: 500, easingFunction: 'easeInOutQuad' } });
-    else if (action === 'copy') navigator.clipboard.writeText(targetId);
-    else if (action === 'wiki') window.open(getWikiLink(targetId), '_blank');
 }

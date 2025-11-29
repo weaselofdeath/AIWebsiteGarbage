@@ -62,7 +62,11 @@ async function transitionToRoom(name) {
     await new Promise(r => setTimeout(r, 100)); // Short fade
 
     // 4. Lock Layout for Calculation
-    network.setOptions({ layout: { hierarchical: { enabled: true } } });
+    // We enforce cubicBezier/horizontal here to ensure the tree builds beautifully
+    network.setOptions({ 
+        layout: { hierarchical: { enabled: true } },
+        edges: { smooth: { type: 'cubicBezier', forceDirection: 'horizontal', roundness: 0.5 } }
+    });
 
     // 5. Build & Diff
     const newGraph = buildGraphData(name);
@@ -81,7 +85,11 @@ async function transitionToRoom(name) {
         
         // 7. Unlock for free movement
         setTimeout(() => {
-            network.setOptions({ layout: { hierarchical: { enabled: false } } });
+            // Disable hierarchy and switch edges to 'continuous' for natural bending when dragged
+            network.setOptions({ 
+                layout: { hierarchical: { enabled: false } },
+                edges: { smooth: { type: 'continuous', forceDirection: 'none' } }
+            });
         }, 600);
     }, 50);
 }
