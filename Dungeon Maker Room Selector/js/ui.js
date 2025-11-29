@@ -25,9 +25,35 @@ function renderRoomList(filter = "") {
 
         const nameSpan = document.createElement('span');
         nameSpan.textContent = name;
+        
+        // BADGE LOGIC
         const badge = document.createElement('span');
-        badge.className = `room-type-badge ${isBase ? 'badge-base' : 'badge-room'}`;
-        badge.textContent = isBase ? "Base" : "Room";
+        
+        // Default Type
+        let typeText = isBase ? "Base" : "Room";
+        let typeClass = isBase ? "badge-base" : "badge-room";
+        
+        // Override from CSV "type" column if present
+        if (roomTypes[name]) {
+            typeText = roomTypes[name];
+            // Normalize class name (e.g. "event" -> "badge-event")
+            // We can style these specifically in CSS later
+            typeClass = `badge-${typeText.toLowerCase().replace(/_/g, '-')}`; 
+            
+            // Fallback style if specific class doesn't exist? 
+            // For now, let's just stick to a generic style or reuse existing if appropriate.
+            // If it's an event, maybe purple?
+            // For now I'll just apply the class. You might want to add .badge-event to CSS.
+        }
+
+        badge.className = `room-type-badge ${typeClass}`;
+        badge.textContent = typeText;
+        
+        // Inline fallback style for new types (optional, to ensure they look okay immediately)
+        if (roomTypes[name] === 'event') {
+            badge.style.backgroundColor = '#6a4c93'; // Purple for events
+            badge.style.color = '#e0c3fc';
+        }
 
         li.appendChild(nameSpan);
         li.appendChild(badge);

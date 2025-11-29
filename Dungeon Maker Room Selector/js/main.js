@@ -5,7 +5,8 @@ async function init() {
     initNetwork(); // Setup Vis.js
     
     try {
-        const response = await fetch('dm_rooms.csv');
+        // Cache-busting for the new CSV structure
+        const response = await fetch(`dm_rooms.csv?t=${Date.now()}`);
         if (response.ok) {
             const text = await response.text();
             loadData(text);
