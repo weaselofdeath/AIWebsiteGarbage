@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Bandit Tower Compendium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Source+Sans+3:wght@400;600;700&family=Noto+Serif+SC:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+/* Layout: lacquered masthead + group tabs; full-width register; each entry is its own page with a large heading band and two reading columns. */
+:root {
+  --paper: #f3f5f1; --sheet: #ffffff; --ink: #18201c; --ink-2: #3f4a44; --ink-3: #6b766f;
+  --rule: #d5dcd3; --hover: #e8ede6; --band: #1d2a25; --band-2: #26362f; --band-ink: #eef3ee; --band-dim: #a9b8af;
+  --seal: #b3361f; --seal-ink: #fff6f0; --jade: #2b6a59;
+  --q1: #6b7470; --q2: #2e8a3e; --q3: #2a6fb0; --q4: #a03aa8; --q5: #a86f00; --q6: #c0261a;
+  --c-orange: #b55a00; --c-green: #2e8a3e; --c-blue: #2a6fb0; --c-yellow: #8a6a00; --c-red: #c0261a; --c-pink: #a03aa8;
+  --f-display: "Marcellus SC", "Palatino Linotype", Georgia, serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-cn: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --r: 8px; --max: 1180px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #12151b; --sheet: #191d25; --ink: #e8eae6; --ink-2: #b9bfbb; --ink-3: #868d8a;
+  --rule: #2d333e; --hover: #222833; --band: #0b0e12; --band-2: #171c24; --band-ink: #eef1ec; --band-dim: #8e9893;
+  --seal: #e0583b; --seal-ink: #1a0d08; --jade: #70c6ab;
+  --q1: #a7adab; --q2: #6fd17a; --q3: #6fb1f0; --q4: #e08ae8; --q5: #f0c04a; --q6: #ff6a55;
+  --c-orange: #f0a050; --c-green: #7ad685; --c-blue: #7fbaf2; --c-yellow: #f0d060; --c-red: #ff7a66; --c-pink: #e8a0ee;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #12151b; --sheet: #191d25; --ink: #e8eae6; --ink-2: #b9bfbb; --ink-3: #868d8a;
+  --rule: #2d333e; --hover: #222833; --band: #0b0e12; --band-2: #171c24; --band-ink: #eef1ec; --band-dim: #8e9893;
+  --seal: #e0583b; --seal-ink: #1a0d08; --jade: #70c6ab;
+  --q1: #a7adab; --q2: #6fd17a; --q3: #6fb1f0; --q4: #e08ae8; --q5: #f0c04a; --q6: #ff6a55;
+  --c-orange: #f0a050; --c-green: #7ad685; --c-blue: #7fbaf2; --c-yellow: #f0d060; --c-red: #ff7a66; --c-pink: #e8a0ee;
+  color-scheme: dark }
+
+body { background: var(--paper); color: var(--ink); font: 16px/1.55 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--band); }
+.wrap { max-width: var(--max); margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+
+/* masthead */
+.mast { background: var(--band); color: var(--band-ink); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+.mast-in { display: flex; align-items: center; gap: 16px 24px; flex-wrap: wrap; padding-block: 14px 10px; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; text-decoration: none; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+.seal { display: grid; place-items: center; width: 42px; height: 42px; background: var(--seal); color: var(--seal-ink); font: 700 15px/1 var(--f-cn); border-radius: 4px; writing-mode: vertical-rl; flex: none; }
+.brand b { display: block; font: 24px/1.1 var(--f-display); letter-spacing: .02em; }
+.brand small { display: block; color: var(--band-dim); font: 13px/1.3 var(--f-cn); }
+.search { flex: 1 1 300px; max-width: 480px; margin-left: auto; position: relative; display: block; }
+.search input { width: 100%; font: 15px var(--f-body); padding: 9px 12px 9px 36px; border: 1px solid transparent; border-radius: var(--r); background: var(--band-2); color: var(--band-ink); }
+.search input::placeholder { color: var(--band-dim); }
+.search input:focus { outline: 2px solid var(--jade); outline-offset: 0; }
+.search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--band-dim); }
+.groups { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.groups button { border: 0; background: none; color: var(--band-dim); font: 600 14px var(--f-body); padding: 9px 14px 11px; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; }
+.groups button:hover { color: var(--band-ink); }
+.groups button[aria-current="true"] { color: var(--band-ink); border-bottom-color: var(--seal); }
+.subnav { background: var(--sheet); border-bottom: 1px solid var(--rule); }
+.subnav .wrap { display: flex; gap: 6px; overflow-x: auto; padding-block: 10px; scrollbar-width: thin; }
+.subnav button { flex: none; display: inline-flex; gap: 8px; align-items: baseline; border: 1px solid var(--rule); background: var(--paper); color: var(--ink-2); font: 600 14px var(--f-body); padding: 5px 12px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+.subnav button span { font: 12px var(--f-mono); opacity: .7; }
+.subnav button:hover { border-color: var(--ink-3); color: var(--ink); }
+.subnav button[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+main#main { padding-block: 24px 64px; }
+
+/* browse */
+.listhead { display: grid; gap: 12px; margin-bottom: 14px; }
+.listhead h1 { margin: 0; font: 32px/1.1 var(--f-display); display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; text-wrap: balance; }
+.listhead h1 small { font: 15px var(--f-body); color: var(--ink-3); }
+.blurb { margin: 0; color: var(--ink-2); max-width: 72ch; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.fgroup { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.fgroup > span { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); margin-right: 2px; }
+.chip { border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); font: 14px var(--f-body); padding: 3px 11px; border-radius: 999px; cursor: pointer; }
+.chip:hover { border-color: var(--ink-3); }
+.chip[aria-pressed="true"] { background: var(--jade); border-color: var(--jade); color: var(--sheet); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.toolbar label { font-size: 13px; color: var(--ink-3); display: flex; gap: 6px; align-items: center; }
+.toolbar select { font: 14px var(--f-body); padding: 4px 8px; border: 1px solid var(--rule); border-radius: var(--r); background: var(--sheet); color: var(--ink); }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: var(--r); overflow: hidden; }
+.seg button { border: 0; background: var(--sheet); color: var(--ink-2); font: 14px var(--f-body); padding: 4px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.kbd { margin-left: auto; font-size: 13px; color: var(--ink-3); }
+.kbd kbd { font: 11.5px var(--f-mono); border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--sheet); }
+
+#rows { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); overflow: hidden; }
+#rows.bare { background: none; border: 0; overflow: visible; }
+.row { display: grid; grid-template-columns: 48px minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: center; width: 100%; padding: 8px 16px; border: 0; border-bottom: 1px solid var(--rule); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.row:last-child { border-bottom: 0; }
+.row:hover, .row:focus-visible { background: var(--hover); }
+.row .nm { min-width: 0; }
+.row .nm b { font-weight: 600; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .nm i { font: normal 13.5px var(--f-cn); color: var(--ink-3); }
+.row .m1 { color: var(--ink-2); font-size: 14.5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .m2 { color: var(--ink-3); font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.star-mark { color: var(--seal); margin-left: 6px; font-size: 13px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.tile { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 14px 8px 10px; border: 1px solid var(--rule); border-radius: var(--r); background: var(--sheet); color: inherit; font: 14px/1.25 var(--f-body); text-align: center; cursor: pointer; min-width: 0; }
+.tile:hover, .tile:focus-visible { border-color: var(--jade); }
+.tile b { font-weight: 600; overflow-wrap: anywhere; }
+.tile i { font: normal 12.5px var(--f-cn); color: var(--ink-3); }
+h3.grp { margin: 0; padding: 14px 16px 6px; font: 12px var(--f-body); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-3); border-bottom: 1px solid var(--rule); background: var(--paper); }
+.more { display: block; margin: 16px auto 0; }
+.empty { padding: 48px 16px; color: var(--ink-3); text-align: center; }
+
+/* entry page */
+.crumbs { display: flex; gap: 8px 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; font-size: 14px; color: var(--ink-3); }
+.crumbs .sp { flex: 1; }
+.tbtn { border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); font: 14px var(--f-body); padding: 5px 14px; border-radius: 999px; cursor: pointer; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tbtn:hover { border-color: var(--jade); color: var(--ink); }
+.tbtn[aria-pressed="true"] { color: var(--seal); border-color: var(--seal); }
+.ehead { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center; padding: 24px; margin-bottom: 32px; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); }
+.ehead .kind { font-size: 12.5px; text-transform: uppercase; letter-spacing: .12em; color: var(--seal); font-weight: 700; }
+.ehead h1 { margin: 2px 0 0; font: 40px/1.05 var(--f-display); text-wrap: balance; }
+.ehead .cn { font: 500 19px var(--f-cn); color: var(--ink-2); margin-top: 4px; }
+.lede { margin: 12px 0 0; max-width: 68ch; color: var(--ink-2); font-size: 17px; }
+.portrait { border-radius: var(--r); background: var(--paper); padding: 6px; display: grid; place-items: center; }
+.ebody { columns: 2 440px; column-gap: 48px; }
+.sec { break-inside: avoid; display: block; margin: 0 0 32px; }
+.sec h4 { margin: 0 0 10px; font: 13px var(--f-body); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-3); display: flex; gap: 10px; align-items: center; }
+.sec h4::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+dl.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 7px 24px; margin: 0; }
+dl.kv dt { color: var(--ink-3); }
+dl.kv dd { margin: 0; min-width: 0; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 14.5px; }
+.src { display: grid; gap: 10px; }
+.src > div { padding: 12px 14px; border: 1px solid var(--rule); border-radius: var(--r); background: var(--sheet); }
+.src b { display: block; font-size: 12.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--jade); margin-bottom: 2px; }
+.links { display: flex; flex-wrap: wrap; gap: 7px; }
+a.ln { display: inline-flex; align-items: center; gap: 7px; padding: 3px 11px 3px 3px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); color: var(--ink); text-decoration: none; font: 15px var(--f-body); cursor: pointer; max-width: 100%; }
+a.ln:hover { border-color: var(--jade); color: var(--jade); }
+a.ln.plain { padding-left: 11px; }
+a.ln .spr { border-radius: 999px; }
+table.t { border-collapse: collapse; width: 100%; font-size: 15px; }
+table.t th, table.t td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: left; }
+table.t th { font-weight: 600; color: var(--ink-3); font-size: 13px; }
+table.t td.num, table.t th.num { text-align: right; }
+.tscroll { overflow-x: auto; }
+.bar { height: 8px; background: var(--rule); border-radius: 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--jade); }
+.desc { margin: 0 0 8px; color: var(--ink-2); max-width: 68ch; }
+.note { font-size: 14px; color: var(--ink-3); margin: 8px 0 0; }
+.pill { display: inline-block; padding: 0 9px; border-radius: 999px; font-size: 13.5px; font-weight: 600; border: 1px solid currentColor; }
+.q1 { color: var(--q1); } .q2 { color: var(--q2); } .q3 { color: var(--q3); } .q4 { color: var(--q4); } .q5 { color: var(--q5); } .q6 { color: var(--q6); }
+.c-orange { color: var(--c-orange); } .c-green { color: var(--c-green); } .c-blue { color: var(--c-blue); } .c-yellow { color: var(--c-yellow); } .c-red { color: var(--c-red); } .c-pink { color: var(--c-pink); }
+.spr { display: inline-block; flex: none; background-repeat: no-repeat; }
+.ph { display: grid; place-items: center; background: var(--hover); border-radius: var(--r); color: var(--ink-3); font: 600 15px var(--f-cn); flex: none; }
+button:focus-visible, a:focus-visible, .row:focus-visible { outline: 2px solid var(--jade); outline-offset: -2px; }
+
+/* recipe tree */
+.rtree, .rtree ul { list-style: none; margin: 0; padding: 0; }
+.rtree ul { margin-left: 12px; }
+.rtree li { position: relative; padding: 5px 0 5px 22px; }
+.rtree > li { padding-left: 0; }
+.rtree ul > li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 2px solid var(--rule); }
+.rtree ul > li:last-child::before { bottom: auto; height: 21px; }
+.rtree ul > li::after { content: ""; position: absolute; left: 0; top: 21px; width: 17px; border-top: 2px solid var(--rule); }
+.rn { display: inline-flex; flex-wrap: wrap; gap: 3px 9px; align-items: center; max-width: 100%; }
+.rn em { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--jade); text-transform: uppercase; letter-spacing: .07em; }
+.rn .note { margin: 0; }
+.rtree > li > .rn strong { font: 19px var(--f-display); }
+.need { display: grid; gap: 8px; padding: 14px 16px; border: 1px dashed var(--jade); border-radius: var(--r); background: var(--sheet); }
+.need p { margin: 0; }
+.need p > b { display: block; font-size: 12.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--jade); margin-bottom: 4px; }
+
+/* class path */
+.path { display: flex; flex-wrap: wrap; gap: 6px 2px; align-items: center; }
+.path .arr { font: 12px var(--f-mono); color: var(--ink-3); padding: 0 6px; white-space: nowrap; }
+
+/* class tree chart */
+.chart { overflow: auto; padding: 16px; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); margin-top: 12px; }
+.ctree { position: relative; }
+.ctree svg { position: absolute; inset: 0; overflow: visible; }
+.ctree path { fill: none; stroke: var(--rule); stroke-width: 1.5; }
+.ctree path.hl { stroke: var(--seal); stroke-width: 2.5; }
+.rankh { position: absolute; top: 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-3); }
+.cnode { position: absolute; display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 10px 0 4px; border: 1px solid var(--rule); border-left: 4px solid var(--ty); border-radius: var(--r); background: var(--paper); color: var(--ink); font: 14px/1.1 var(--f-body); text-align: left; cursor: pointer; }
+.cnode:hover { border-color: var(--ty); }
+.cnode span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dimmed .cnode:not(.hl) { opacity: .38; }
+.cnode.hl { box-shadow: 0 0 0 1px var(--ty); }
+.cnode.sel { background: var(--hover); font-weight: 700; }
+.ty-Strength { --ty: var(--c-orange); } .ty-Agility { --ty: var(--c-green); } .ty-Spell { --ty: var(--c-blue); } .ty-Production { --ty: var(--c-yellow); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--ink-2); }
+.legend span::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 2px; background: var(--ty); margin-right: 7px; vertical-align: -1px; }
+
+/* progression ladder */
+.ladder { list-style: none; margin: 0; padding: 4px 0 0; display: grid; }
+.ladder > li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; position: relative; padding-bottom: 16px; }
+.ladder > li::before { content: ""; position: absolute; left: 31px; top: 30px; bottom: 0; border-left: 2px solid var(--rule); }
+.ladder > li:last-child::before { display: none; }
+.step { width: 64px; height: 30px; display: grid; place-items: center; border-radius: 999px; background: var(--ink); color: var(--paper); font: 600 13px var(--f-mono); position: relative; z-index: 1; }
+.lrow { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; min-width: 0; }
+.lcard { flex: 1 1 300px; min-width: 0; padding: 10px 14px; border: 1px solid var(--rule); border-radius: var(--r); background: var(--sheet); display: grid; gap: 6px; }
+.lcard.wild { flex: 1 1 260px; border-style: dashed; border-color: var(--jade); background: var(--paper); }
+.lcard .top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.lcard .facts { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; color: var(--ink-3); }
+.lcard .facts b { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 760px) {
+  .row { grid-template-columns: 44px minmax(0, 1fr) auto; padding: 8px 12px; }
+  .row .m2 { display: none; }
+  .ehead { grid-template-columns: minmax(0, 1fr); padding: 18px; gap: 14px; }
+  .ehead h1 { font-size: 32px; }
+  .listhead h1 { font-size: 26px; }
+  .kbd { display: none; }
+  .brand small { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) { .row, .chip, .tile, a.ln { transition: background-color .12s, border-color .12s, color .12s; } }
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="mast">
+    <div class="wrap mast-in">
+      <button type="button" class="brand" data-home="1" aria-label="Bandit Tower Compendium home">
+        <span class="seal" aria-hidden="true">山贼</span>
+        <span><b>Bandit Tower Compendium</b><small>塔防山贼模拟器 · every item, hero, place and recipe</small></span>
+      </button>
+      <label class="search" for="q">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search everything (English or 中文)" autocomplete="off" aria-label="Search the compendium">
+      </label>
+    </div>
+    <nav class="wrap groups" id="groups" aria-label="Sections"></nav>
+  </header>
+  <div class="subnav"><nav class="wrap" id="subnav" aria-label="Categories"></nav></div>
+  <main class="wrap" id="main"><div class="empty">Loading the ledger…</div></main>
+</div>
+
+<script>
+"use strict";
+let D = null;
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const COLORS = { orange: "c-orange", lightgreen: "c-green", green: "c-green", lightblue: "c-blue", aqua: "c-blue", yellow: "c-yellow", gold: "c-yellow", red: "c-red", fuchsia: "c-pink", deeppink: "c-pink" };
+function rich(s) {
+  let out = esc(s).replace(/\[color=([^\]]+)\]/gi, (_, c) => `<span class="${COLORS[c.toLowerCase()] || ""}">`).replace(/\[\/color\]/gi, "</span>");
+  const open = (out.match(/<span/g) || []).length - (out.match(/<\/span>/g) || []).length;
+  return out + "</span>".repeat(Math.max(0, open));
+}
+const fmtNum = (v) => (typeof v === "number" ? (Math.round(v * 1000) / 1000).toLocaleString("en-US") : esc(v));
+
+/* ---------- sprites ---------- */
+function sprite(atlas, idx, size, fallback) {
+  const A = D.atlas[atlas];
+  if (idx == null || !A) return `<span class="ph" style="width:${size}px;height:${size}px">${esc((fallback || "?").slice(0, 1))}</span>`;
+  const s = size / Math.max(A.cw, A.ch), w = A.cw * s, h = A.ch * s;
+  const x = (idx % A.cols) * A.cw * s, y = Math.floor(idx / A.cols) * A.ch * s;
+  return `<span class="spr" style="width:${w}px;height:${h}px;background-image:url(${A.file});background-size:${A.cols * A.cw * s}px ${A.rows * A.ch * s}px;background-position:-${x}px -${y}px" aria-hidden="true"></span>`;
+}
+
+/* ---------- lookups ---------- */
+const by = {};
+const T = (cat, id) => by[cat] && by[cat].get(id);
+const stat = (id) => T("stats", id);
+const statName = (id) => (stat(id) ? stat(id).n : `Stat ${id}`);
+function statVal(id, v) {
+  const s = stat(id); const f = s ? s.fmt : "int";
+  if (f === "pct") return `${fmtNum(v)}%`;
+  if (f === "mult") return `×${fmtNum(v)}`;
+  return fmtNum(v);
+}
+const tierName = (t) => (t ? (D.meta.tiers[t] || `Tier ${t}`) : "—");
+
+/* ---------- categories ---------- */
+const ICONK = { heroes: "hero", foes: "foe" };
+const CATS = [
+  { k: "classtree", t: "Class tree", g: "Charts", view: () => viewClassTree(), count: () => D.classes.length,
+    blurb: "Every hero starts as a Vagrant and branches out from there. Advance once the current class reaches Lv 10 (Lv 5 for Vagrant). Pick a class to light up its line." },
+  { k: "progress", t: "World progression", g: "Charts", view: () => viewProgress(), count: () => D.locs.filter((l) => l.type === "City").length,
+    blurb: "Cities open one after another: each needs the previous city at danger level 50. Wild areas branch off every third city and hold the spirit beasts that drop set and core materials." },
+  { k: "starred", t: "Starred", g: "Charts", view: () => viewStarred(), count: () => stars.length,
+    blurb: "Entries you starred. Stars are saved in this browser only." },
+  { k: "items", t: "Items", g: "Gear & goods", blurb: "Equipment, set pieces, cores, elixirs and Soul Tower treasures. Each entry shows where to get it: the blueprint, the materials, merge inputs, or the tower floor.",
+    filters: [["Type", (x) => x.cat], ["Slot", (x) => x.slot || "—"], ["Tier", (x) => tierName(x.tier)]],
+    meta: (x) => [x.cat, `${tierName(x.tier)}${x.sub ? " · " + x.sub : ""}`] },
+  { k: "sets", t: "Gear sets", g: "Gear & goods", blurb: "Set bonuses activate at 2, 4 and 6 equipped pieces. Pieces are merged at the Forge from a regular item plus a beast material.",
+    filters: [["Tier", (x) => tierName(x.tiers[0])]], meta: (x) => [`${x.pieces.length} pieces`, tierName(x.tiers[0])] },
+  { k: "mats", t: "Materials", g: "Gear & goods", blurb: "Wood, ore, herbs, beast pills and alchemy pills used to build and craft.",
+    filters: [["Type", (x) => x.type], ["Tier", (x) => `T${x.tier}`]], meta: (x) => [x.type, `T${x.tier}${x.gather ? " · " + x.gather : ""}`] },
+  { k: "beasts", t: "Beast materials", g: "Gear & goods", blurb: "Spirit materials dropped by the rare spirit beast in each wild area. They are needed to merge set pieces and refine cores.",
+    filters: [["Type", (x) => x.type]], meta: (x) => [x.type, `T${x.tier}`] },
+  { k: "heroes", t: "Heroes", g: "People", blurb: "Every recruitable hero: aptitudes, starting class, work-skill caps, talents, and where to recruit them (tavern or captured governor).",
+    filters: [["Rarity", (x) => x.rarityN], ["Recruit", (x) => recruitTag(x)]], meta: (x) => [x.rarityN, clsName(x.cls)] },
+  { k: "classes", t: "Classes", g: "People", blurb: "The class tree. Each class needs one of its listed predecessor classes, grants a basic attack, an active skill and a passive.",
+    filters: [["Type", (x) => x.type], ["Rank", (x) => `Rank ${x.tier}`]], meta: (x) => [x.type, `Rank ${x.tier}`] },
+  { k: "skills", t: "Skills", g: "People", blurb: "Basic attacks, active skills and passives granted by classes.",
+    filters: [["Type", (x) => x.type], ["Element", (x) => x.elem || "None"], ["Grade", (x) => x.qN]], meta: (x) => [x.type, [x.elem, x.qN].filter(Boolean).join(" · ")] },
+  { k: "talents", t: "Talents", g: "People", blurb: "Innate hero talents, each with five levels. Values shown are what the game computes at each level.",
+    filters: [["Scope", (x) => x.scope], ["Rarity", (x) => x.rarity]], meta: (x) => [x.scope, x.rarity] },
+  { k: "locs", t: "World map", g: "World", blurb: "Cities, wild areas and the Soul Tower: what they produce, who lives there, and which blueprints their Lord Hall trades.",
+    filters: [["Type", (x) => x.type], ["Region", (x) => x.region || "—"]], meta: (x) => [x.type, x.region] },
+  { k: "foes", t: "Enemies", g: "World", blurb: "Raiders, wild monsters, challenge elites, spirit-beast bosses and city governors.",
+    filters: [["Rank", (x) => x.rank], ["Faction", (x) => x.fac]], meta: (x) => [x.rank, x.fac] },
+  { k: "buildings", t: "Buildings", g: "Stronghold", blurb: "Functional buildings and decorations for your mountain stronghold.",
+    filters: [["Category", (x) => x.cat]], meta: (x) => [x.cat, `${x.sub} · ${x.size}`] },
+  { k: "facilities", t: "Facilities", g: "Stronghold", blurb: "Work stations placed inside buildings: forges, workbenches, cauldrons, training posts, fields and mines, in tiers 1–10.",
+    filters: [["Work", (x) => x.work], ["Tier", (x) => `T${x.tier}`]], meta: (x) => [x.work, `T${x.tier}`] },
+  { k: "techs", t: "Technology", g: "Stronghold", blurb: "Research unlocks buildings, features and production bonuses.",
+    filters: [["Branch", (x) => x.branch || "—"]], meta: (x) => [x.branch, x.eff] },
+  { k: "quests", t: "Guide quests", g: "Progress", blurb: "The tutorial quest chain, in order.", filters: [["Type", (x) => x.goal]], meta: (x) => [x.goal, `#${x.id}`] },
+  { k: "achievements", t: "Achievements", g: "Progress", blurb: "Milestones tracked by the game.", filters: [["Group", (x) => x.group]], meta: (x) => [x.group, `${x.metric}: ${x.target}`] },
+  { k: "stats", t: "Stats glossary", g: "Reference", blurb: "Every attribute the game tracks, with its group and what it does.", filters: [["Group", (x) => x.grp]], meta: (x) => [x.grp, x.scope] },
+  { k: "buffs", t: "Buffs", g: "Reference", blurb: "Timed status effects applied by active skills.", filters: [], meta: (x) => [statName(x.stat), `${x.dur}s`] },
+];
+const CAT = Object.fromEntries(CATS.map((c) => [c.k, c]));
+const DATA_CATS = CATS.filter((c) => !c.view);
+const aptSum = (h) => h.apt[0] + h.apt[1] + h.apt[2];
+const SORTS = {
+  items: [["Tier", (x) => x.tier], ["Treasure rarity", (x) => -(x.rarity || 0)]],
+  sets: [["Tier", (x) => x.tiers[0]]],
+  mats: [["Tier", (x) => x.tier]],
+  beasts: [["Tier", (x) => x.tier]],
+  heroes: [["Rarity", (x) => -x.rarity], ["Total aptitude", (x) => -aptSum(x)], ["STR", (x) => -x.apt[0]], ["AGI", (x) => -x.apt[1]], ["INT", (x) => -x.apt[2]]],
+  classes: [["Rank", (x) => x.tier]],
+  skills: [["Multiplier", (x) => -x.coef], ["Cooldown", (x) => x.cd || 999], ["Grade", (x) => -x.q]],
+  locs: [["Difficulty", (x) => x.diff]],
+  foes: [["HP factor", (x) => -x.hp], ["Speed", (x) => -x.spd]],
+  facilities: [["Tier", (x) => x.tier]],
+  achievements: [["Target", (x) => x.target]],
+};
+const GRIDABLE = new Set(["items", "sets", "mats", "beasts", "heroes", "classes", "skills", "foes", "buffs", "buildings"]);
+
+function iconOf(cat, x, size) {
+  const atlas = ICONK[cat] || "icon";
+  return sprite(atlas, x.icon, size, x.n);
+}
+const clsName = (id) => (T("classes", id) || {}).n || "—";
+function recruitTag(h) {
+  if (h.tavern) return "Tavern";
+  if (D._gov.has(h.id)) return "Governor";
+  return "Other";
+}
+
+/* ---------- link helpers ---------- */
+function ln(cat, id, label) {
+  const x = T(cat, id);
+  if (!x) return esc(label || `#${id}`);
+  const ic = cat === "stats" || cat === "techs" || cat === "quests" || cat === "achievements" || cat === "talents";
+  return `<a class="ln${ic ? " plain" : ""}" href="#${cat}-${id}" data-go="${cat}-${id}">${ic ? "" : iconOf(cat, x, 22)}<span>${esc(label || x.n)}</span></a>`;
+}
+const links = (arr) => (arr.length ? `<div class="links">${arr.join("")}</div>` : `<span class="note">None</span>`);
+const sec = (title, html) => (html ? `<section class="sec"><h4>${esc(title)}</h4>${html}</section>` : "");
+const kv = (pairs) => `<section class="sec"><h4>Overview</h4><dl class="kv">${pairs.filter((p) => p[1] !== "" && p[1] != null).map(([a, b]) => `<dt>${esc(a)}</dt><dd>${b}</dd>`).join("")}</dl></section>`;
+const qpill = (q, label) => `<span class="pill q${q}">${esc(label)}</span>`;
+
+/* ---------- recipe tree ---------- */
+const tnode = (label, html, kids = []) => `<li><span class="rn"><em>${esc(label)}</em>${html}</span>${kids.length ? `<ul>${kids.join("")}</ul>` : ""}</li>`;
+function recipeNode(it, depth, need, label) {
+  const S = it.src, kids = [];
+  if (S.bp) {
+    const c = T("locs", S.bp.city);
+    if (c) need.bp.set(c.id, Math.max(need.bp.get(c.id) || 0, S.bp.lvl || 0));
+    const where = { Forge: "Forge", Craft: "Workshop", Merge: "Forge (merge)", Refine: "Alchemy (refine)" }[S.bp.kind];
+    kids.push(tnode(`Blueprint`, `${c ? ln("locs", c.id, `Lord Hall · ${c.n}`) : "?"}${S.bp.lvl ? ` <span class="note">from danger lv ${S.bp.lvl}</span>` : ""} <span class="note">· made at ${where}</span>`));
+  }
+  (S.mats || []).forEach((m) => { need.mats.add(m); const mt = T("mats", m); kids.push(tnode("Material", ln("mats", m) + (mt && mt.gather ? ` <span class="note">· ${esc(mt.gather)}</span>` : ""))); });
+  const m = S.merge || S.refine;
+  if (m) {
+    const base = T("items", m.base);
+    if (base) kids.push(depth < 2 ? recipeNode(base, depth + 1, need, S.merge ? `Base · any ${base.sub}` : "Base") : tnode("Base", ln("items", base.id)));
+    const b = T("beasts", m.beast);
+    if (b) {
+      need.beasts.add(b.id);
+      const boss = T("foes", b.boss), where = boss && D.locs.find((l) => l.beast === boss.id);
+      if (where) need.places.add(where.id);
+      const wk = where ? [tnode("Found in", ln("locs", where.id) + (where.unlock ? ` <span class="note">· opens at ${esc(T("locs", where.unlock[0]).n)} lv ${where.unlock[1]}</span>` : ""))] : [];
+      kids.push(tnode("Beast material", ln("beasts", b.id), boss ? [tnode("Dropped by", ln("foes", boss.id), wk)] : []));
+    }
+  }
+  if (S.tower != null) {
+    const tower = D.locs.find((l) => l.cn === "万魂塔");
+    kids.push(tnode("Loot", `${tower ? ln("locs", tower.id) : "Soul Tower"} <span class="note">· drawn after victories${S.tower ? `; exchange from floor ${S.tower}` : ""}</span>`));
+  }
+  if (S.shop) kids.push(tnode("Shop", `<span class="note">Random stock in city shops</span>`));
+  if (S.brew) kids.push(tnode("Brew", `<span class="note">Alchemy blueprint at a Cauldron facility</span>`));
+  return tnode(label || it.cat, depth === 0 ? `<strong>${esc(it.n)}</strong>` : ln("items", it.id), kids);
+}
+
+/* ---------- class lines ---------- */
+const advLv = (preId) => (preId === 1 ? 5 : 10);
+function classLine(id) {
+  const out = []; let c = T("classes", id);
+  while (c) { out.unshift(c); c = c.pre.length ? T("classes", c.pre[0]) : null; }
+  return out;
+}
+const classKids = (id) => D.classes.filter((c) => c.pre.includes(id));
+function classDesc(id) { const out = []; (function walk(i) { classKids(i).forEach((c) => { out.push(c); walk(c.id); }); })(id); return out; }
+function pathHtml(line) {
+  return `<div class="path">${line.map((c, i) => (i ? `<span class="arr">Lv ${advLv(line[i - 1].id)} →</span>` : "") + ln("classes", c.id)).join("")}</div>`;
+}
+const goTree = `<button type="button" class="tbtn" data-cat="classtree">Open the class tree</button>`;
+
+/* ---------- chart views ---------- */
+function selectedClass() {
+  if (!state.sel) return null;
+  const [k, id] = state.sel.split(/-(?=\d+$)/);
+  if (k === "classes") return Number(id);
+  if (k === "heroes") { const h = T("heroes", Number(id)); return h ? h.cls : null; }
+  return null;
+}
+function viewClassTree() {
+  const root = D.classes.find((c) => !c.pre.length);
+  const RH = 44, CW = 200, NW = 172, NH = 36, TOP = 26;
+  const pos = {}; let leaf = 0;
+  (function place(c) {
+    const ch = classKids(c.id); ch.forEach(place);
+    pos[c.id] = { x: (c.tier - 1) * CW, y: TOP + (ch.length ? (pos[ch[0].id].y - TOP + pos[ch[ch.length - 1].id].y - TOP) / 2 : leaf++ * RH) };
+  })(root);
+  const maxTier = Math.max(...D.classes.map((c) => c.tier));
+  const W = (maxTier - 1) * CW + NW, H = TOP + leaf * RH;
+  const sel = selectedClass();
+  const hl = new Set(sel ? [...classLine(sel), ...classDesc(sel)].map((c) => c.id) : []);
+  const edges = D.classes.filter((c) => c.pre.length && pos[c.pre[0]]).map((c) => {
+    const a = pos[c.pre[0]], b = pos[c.id], x1 = a.x + NW, y1 = a.y + NH / 2, x2 = b.x, y2 = b.y + NH / 2, mx = (x1 + x2) / 2;
+    return `<path class="${hl.has(c.id) && hl.has(c.pre[0]) ? "hl" : ""}" d="M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}"/>`;
+  }).join("");
+  const heads = Array.from({ length: maxTier }, (_, i) => `<div class="rankh" style="left:${i * CW}px">Rank ${i + 1}</div>`).join("");
+  const nodes = D.classes.map((c) => `<button type="button" class="cnode ty-${esc(c.type)}${hl.has(c.id) ? " hl" : ""}${c.id === sel ? " sel" : ""}" style="left:${pos[c.id].x}px;top:${pos[c.id].y}px;width:${NW}px" data-go="classes-${c.id}" title="${esc(c.n)} · ${esc(c.type)} · Rank ${c.tier}">${sprite("icon", c.icon, 26, c.n)}<span>${esc(c.n)}</span></button>`).join("");
+  const types = [...new Set(D.classes.map((c) => c.type))];
+  return `<div class="legend">${types.map((t) => `<span class="ty-${esc(t)}">${esc(t)}</span>`).join("")}</div>
+    <div class="chart"><div class="ctree${sel ? " dimmed" : ""}" style="width:${W}px;height:${H}px">${heads}<svg width="${W}" height="${H}" aria-hidden="true">${edges}</svg>${nodes}</div></div>`;
+}
+function viewProgress() {
+  const cities = D.locs.filter((l) => l.type === "City").sort((a, b) => a.diff - b.diff);
+  const branches = (id) => D.locs.filter((l) => l.type !== "City" && l.unlock && l.unlock[0] === id);
+  const tavernN = (id) => D.heroes.filter((h) => h.tavern && h.tavern[0] === id).length;
+  const bpN = (id) => D.items.filter((i) => i.src.bp && i.src.bp.city === id).length;
+  return `<ol class="ladder">${cities.map((c) => {
+    const br = branches(c.id).map((w) => {
+      const beast = w.beast && T("foes", w.beast);
+      const facts = w.cn === "万魂塔" ? `<span>Treasure loot · floors unlock exchanges</span>` : `<span>Opens at <b>lv ${w.unlock[1]}</b></span>${w.realm ? `<span>${esc(w.realm)}</span>` : ""}`;
+      return `<div class="lcard wild"><div class="top">${ln("locs", w.id)}${beast ? `<span class="note">beast</span>${ln("foes", beast.id)}` : ""}</div><div class="facts">${facts}</div></div>`;
+    }).join("");
+    const gov = c.gov && T("heroes", c.gov);
+    return `<li><span class="step" title="Difficulty">${c.diff}</span><div class="lrow"><div class="lcard"><div class="top">${ln("locs", c.id)}${gov ? `<span class="note">governor</span>${ln("heroes", gov.id)}` : ""}</div>
+      <div class="facts"><span>${esc(c.region)}</span><span><b>${tavernN(c.id)}</b> tavern heroes</span><span><b>${bpN(c.id)}</b> blueprints</span>${c.unlock ? `<span>needs ${esc(T("locs", c.unlock[0]).n)} lv ${c.unlock[1]}</span>` : `<span>Starting city</span>`}</div></div>${br}</div></li>`;
+  }).join("")}</ol>`;
+}
+function viewStarred() {
+  const rows = stars.map((t) => { const [k, id] = t.split(/-(?=\d+$)/); const x = T(k, Number(id)); return x ? [k, x] : null; }).filter(Boolean);
+  if (!rows.length) return `<div class="empty">Nothing starred yet. Open any entry and press <strong>Star</strong> to keep it here.</div>`;
+  return rowsHtml(rows, true);
+}
+
+/* ---------- detail renderers ---------- */
+const R = {};
+R.items = (x) => {
+  const parts = [];
+  const tierLine = x.cat === "Treasure" && x.rarity ? qpill(x.rarity, D.meta.quality[x.rarity]) : esc(tierName(x.tier));
+  parts.push(kv([["Type", esc(x.cat)], ["Tier", tierLine], ["Slot", esc(x.slot)], ["Kind", esc(x.sub)], ["Random affixes", esc(x.affix)], ["Set", x.set ? ln("sets", x.set) + ` <span class="note">piece ${x.piece}</span>` : ""]]));
+  if (x.stats.length) parts.push(sec("Main stats", `<table class="t"><tr><th>Stat</th><th class="num">Weight</th></tr>${x.stats.map(([s, c]) => `<tr><td>${ln("stats", s)}</td><td class="num">${c}%</td></tr>`).join("")}</table><p class="note">Actual numbers scale with the item's level, tier and rolled quality. The weight is the share of the full value this item gets for that stat.</p>`));
+  const need = { bp: new Map(), mats: new Set(), beasts: new Set(), places: new Set() };
+  parts.push(sec("Recipe tree", `<ul class="rtree">${recipeNode(x, 0, need)}</ul>`));
+  const needHtml = [];
+  if (need.bp.size) needHtml.push(`<p><b>Blueprints</b> from the Lord Hall in ${[...need.bp.entries()].map(([c, lv]) => ln("locs", c, `${T("locs", c).n}${lv ? ` (lv ${lv})` : ""}`)).join(" ")}</p>`);
+  if (need.mats.size) needHtml.push(`<p><b>Gather</b> ${[...need.mats].map((m) => ln("mats", m)).join(" ")}</p>`);
+  if (need.beasts.size) needHtml.push(`<p><b>Hunt</b> ${[...need.beasts].map((b) => ln("beasts", b)).join(" ")} in ${[...need.places].map((p) => ln("locs", p)).join(" ")}</p>`);
+  if (needHtml.length > 1) parts.push(sec("Gather list", `<div class="need">${needHtml.join("")}</div>`));
+  const usedFor = D.items.filter((i) => (i.src.merge && i.src.merge.base === x.id) || (i.src.refine && i.src.refine.base === x.id));
+  if (usedFor.length) parts.push(sec(`Used to make (${usedFor.length})`, links(usedFor.map((i) => ln("items", i.id)))));
+  return parts.join("");
+};
+function setBonus(sid, coef) {
+  const f = (stat(sid) || {}).fmt;
+  if (f === "pct") return `+${fmtNum(coef / 10)}%`;
+  if (f === "mult") return `×${fmtNum(coef / 1000)}`;
+  return `+${fmtNum(coef / 5)}`;
+}
+R.sets = (x) => [
+  sec("Set bonuses", `<table class="t"><tr><th>Pieces</th><th>Stat</th><th class="num">Bonus</th></tr>${x.bonus.map(([p, s, c]) => `<tr><td class="num">${p}</td><td>${ln("stats", s)}</td><td class="num">${setBonus(s, c)}</td></tr>`).join("")}</table><p class="note">Shown at set level 4. The bonus grows with the set's combined level above that.</p>`),
+  sec(`Pieces (${x.pieces.length})`, links(x.pieces.map((p) => ln("items", p)))),
+].join("");
+R.mats = (x) => {
+  const used = D.items.filter((i) => i.src.mats && i.src.mats.includes(x.id));
+  return [kv([["Type", esc(x.type)], ["Tier", `T${x.tier}`], ["Rarity", esc(x.rarity)], ["Gathered by", esc(x.gather)], ["Source node", esc(x.node)]]),
+    sec("Produced by", links(D.locs.filter((l) => l.prod.includes(x.id)).map((l) => ln("locs", l.id)))),
+    used.length ? sec(`Crafting ingredient for (${used.length})`, links(used.slice(0, 60).map((i) => ln("items", i.id))) + (used.length > 60 ? `<p class="note">and ${used.length - 60} more</p>` : "")) : ""].join("");
+};
+R.beasts = (x) => {
+  const boss = T("foes", x.boss), where = boss && D.locs.find((l) => l.beast === boss.id);
+  const used = D.items.filter((i) => [i.src.merge, i.src.refine].some((m) => m && m.beast === x.id));
+  return [kv([["Type", esc(x.type)], ["Tier", `T${x.tier}`], ["Category", esc(x.kind)], ["Sell value", `<span class="num">${x.price}</span>`]]),
+    sec("Dropped by", `<div class="src"><div>${boss ? ln("foes", boss.id) : "?"}${where ? ` · rare spirit beast of ${ln("locs", where.id)}` : ""}</div></div>`),
+    sec(`Used in (${used.length})`, links(used.map((i) => ln("items", i.id))))].join("");
+};
+R.heroes = (x) => {
+  const max = 100;
+  const apt = ["STR", "AGI", "INT"].map((n, i) => `<tr><td>${n}</td><td class="num">${x.apt[i].toFixed(1)}</td><td style="width:55%"><div class="bar"><i style="width:${Math.min(100, (x.apt[i] / 12) * 100)}%"></i></div></td></tr>`).join("");
+  const sk = x.skills.map(([lv, cap], i) => `<tr><td>${D.meta.skills9[i]}</td><td class="num">${lv}</td><td class="num">${cap}</td><td style="width:40%"><div class="bar"><i style="width:${Math.min(100, (cap / max) * 100)}%"></i></div></td></tr>`).join("");
+  const rec = [];
+  if (x.tavern) { const c = T("locs", x.tavern[0]); rec.push(`<div><b>Tavern</b>Appears in the tavern of ${c ? ln("locs", c.id) : "?"} once its danger level reaches <span class="num">${x.tavern[1]}</span>.</div>`); }
+  const gov = D.locs.filter((l) => l.gov === x.id);
+  gov.forEach((l) => rec.push(`<div><b>Captured governor</b>Governor of ${ln("locs", l.id)}. Fill the city's reputation, take the city, then capture and recruit them.</div>`));
+  if (!rec.length) rec.push(`<div><b>Other</b>Not tied to a tavern or city. Heroes like this come from random recruitment (posting notices, bounties, events) or the starting roster.</div>`);
+  return [kv([["Rarity", qpill(Math.max(1, x.rarity), x.rarityN)], ["Starting class", ln("classes", x.cls)], ["Gender", x.sex === "F" ? "Female" : "Male"]]),
+    sec("How to recruit", `<div class="src">${rec.join("")}</div>`),
+    sec("Class line", pathHtml(classLine(x.cls)) + (() => { const ends = classDesc(x.cls).filter((c) => !classKids(c.id).length); return ends.length ? `<p class="note">Can still advance to:</p>${links(ends.map((c) => ln("classes", c.id)))}` : ""; })() + `<div class="links" style="margin-top:8px">${goTree}</div>`),
+    sec("Aptitude", `<table class="t">${apt}</table>`),
+    sec("Work skills", `<div class="tscroll"><table class="t"><tr><th>Skill</th><th class="num">Start</th><th class="num">Cap</th><th></th></tr>${sk}</table></div>`),
+    sec("Talents", links(x.talents.map(([t, lv]) => ln("talents", t, `${(T("talents", t) || {}).n} Lv ${lv}`))))].join("");
+};
+R.classes = (x) => {
+  const next = D.classes.filter((c) => c.pre.includes(x.id));
+  const heroes = D.heroes.filter((h) => h.cls === x.id);
+  return [`<p class="desc">${esc(x.desc)}</p>`,
+    kv([["Type", esc(x.type)], ["Rank", `${x.tier}`], ["Damage", esc(x.dmg)]]),
+    sec("Coefficients at level 1", `<table class="t"><tr><th>Attack</th><th>Atk speed</th><th>Range</th><th>Work</th></tr><tr>${x.coef.map((c) => `<td class="num">${c}</td>`).join("")}</tr></table>`),
+    sec("Path from Vagrant", pathHtml(classLine(x.id)) + `<p class="note">${x.pre.length ? `Advance from ${esc(T("classes", x.pre[0]).n)} once it reaches Lv ${advLv(x.pre[0])}.` : "Every hero can start here."}</p><div class="links" style="margin-top:8px">${goTree}</div>`),
+    sec("Skills granted", links(x.skills.map((s) => ln("skills", s)))),
+    next.length ? sec("Leads to", links(next.map((c) => ln("classes", c.id))) + (classDesc(x.id).length > next.length ? `<p class="note">${classDesc(x.id).length} classes reachable in total.</p>` : "")) : sec("Leads to", `<span class="note">Final rank of this line</span>`),
+    heroes.length ? sec(`Heroes starting as this class (${heroes.length})`, links(heroes.map((h) => ln("heroes", h.id)))) : ""].join("");
+};
+R.skills = (x) => {
+  const cls = D.classes.filter((c) => c.skills.includes(x.id));
+  return [x.desc ? `<p class="desc">${rich(x.desc)}</p>` : "",
+    kv([["Type", esc(x.type)], ["Grade", qpill(Math.min(6, x.q + 1), x.qN)], ["Element", esc(x.elem)], ["Damage", esc(x.dmg)],
+      ["Multiplier", x.type !== "Passive" ? `<span class="num">${x.coef}%</span>` : ""], ["SP cost", x.sp ? `<span class="num">${x.sp}</span>` : ""], ["Cooldown", x.cd ? `<span class="num">${x.cd}s</span>` : ""],
+      ["Buff", x.buff ? ln("buffs", x.buff) : ""]]),
+    x.passive ? sec("Passive effects", `<table class="t">${x.passive.map(([s, v]) => `<tr><td>${ln("stats", s)}</td><td class="num">${v}</td></tr>`).join("")}</table><p class="note">Raw coefficients from the game data. The in-game value scales with class level.</p>`) : "",
+    sec("Granted by", links(cls.map((c) => ln("classes", c.id))))].join("");
+};
+R.talents = (x) => {
+  const heroes = D.heroes.filter((h) => h.talents.some(([t]) => t === x.id));
+  return [kv([["Scope", esc(x.scope)], ["Rarity", esc(x.rarity)]]),
+    sec("Effect by level", `<div class="tscroll"><table class="t"><tr><th>Stat</th>${[1, 2, 3, 4, 5].map((l) => `<th class="num">Lv ${l}</th>`).join("")}</tr>${x.eff.map(([s, vals]) => `<tr><td>${ln("stats", s)}</td>${vals.map((v) => `<td class="num">${statVal(s, v)}</td>`).join("")}</tr>`).join("")}</table></div>`),
+    sec(`Heroes born with it (${heroes.length})`, links(heroes.map((h) => ln("heroes", h.id, `${h.n} Lv ${h.talents.find(([t]) => t === x.id)[1]}`))))].join("");
+};
+R.locs = (x) => {
+  const parts = [x.desc ? `<p class="desc">${esc(x.desc)}</p>` : ""];
+  parts.push(kv([["Type", esc(x.type)], ["Region", esc(x.region)], ["Difficulty", x.diff ? `<span class="num">${x.diff}</span>${x.realm ? ` · ${esc(x.realm)}` : ""}` : ""],
+    ["Unlocks", x.unlock ? `${ln("locs", x.unlock[0])} at level <span class="num">${x.unlock[1]}</span>` : ""]]));
+  if (x.prod.length) parts.push(sec("Produces", links(x.prod.map((m) => ln("mats", m)))));
+  if (x.foes) parts.push(sec("Monsters", links(x.foes.map((f) => ln("foes", f)))));
+  if (x.beast) {
+    const drops = D.beasts.filter((b) => b.boss === x.beast);
+    parts.push(sec("Rare spirit beast", `<div class="src"><div>${ln("foes", x.beast)}<p class="note">Drops:</p>${links(drops.map((b) => ln("beasts", b.id)))}</div></div>`));
+  }
+  if (x.gov) parts.push(sec("Governor", links([ln("heroes", x.gov)])));
+  const tav = D.heroes.filter((h) => h.tavern && h.tavern[0] === x.id).sort((a, b) => a.tavern[1] - b.tavern[1]);
+  if (tav.length) parts.push(sec(`Tavern heroes (${tav.length})`, `<table class="t"><tr><th>Hero</th><th class="num">Danger lv</th></tr>${tav.map((h) => `<tr><td>${ln("heroes", h.id)}</td><td class="num">${h.tavern[1]}</td></tr>`).join("")}</table>`));
+  const bps = D.items.filter((i) => i.src.bp && i.src.bp.city === x.id);
+  if (bps.length) {
+    const groups = {};
+    bps.forEach((i) => (groups[i.cat] = groups[i.cat] || []).push(i));
+    parts.push(sec(`Lord Hall blueprints (${bps.length})`, Object.entries(groups).map(([g, arr]) => `<p class="note">${esc(g)}</p>${links(arr.map((i) => ln("items", i.id, i.src.bp.lvl ? `${i.n} · lv ${i.src.bp.lvl}` : i.n)))}`).join("")));
+  }
+  if (x.cn === "万魂塔") {
+    const tr = D.items.filter((i) => i.src.tower != null);
+    parts.push(sec(`Treasures (${tr.length})`, links(tr.map((i) => ln("items", i.id)))));
+  }
+  return parts.join("");
+};
+R.foes = (x) => {
+  const where = D.locs.filter((l) => (l.foes && l.foes.includes(x.id)) || l.beast === x.id || l.govFoe === x.id);
+  const drops = D.beasts.filter((b) => b.boss === x.id);
+  const hero = D.heroes.find((h) => h.cn === x.cn);
+  return [kv([["Rank", esc(x.rank)], ["Faction", esc(x.fac)], ["Element", esc(x.elem)], ["HP factor", `<span class="num">${x.hp}</span>`], ["Speed", `<span class="num">${x.spd}</span>`]]),
+    where.length ? sec("Found in", links(where.map((l) => ln("locs", l.id)))) : "",
+    drops.length ? sec("Drops", links(drops.map((b) => ln("beasts", b.id)))) : "",
+    hero ? sec("Recruitable as", links([ln("heroes", hero.id)])) : ""].join("");
+};
+R.buildings = (x) => {
+  const tech = x.tech && T("techs", x.tech);
+  return [x.desc ? `<p class="desc">${rich(x.desc)}</p>` : "", kv([["Category", esc(x.cat)], ["Function", esc(x.sub)], ["Footprint", esc(x.size)], ["Needs tech", tech ? ln("techs", tech.id) : ""]]),
+    sec("Unlocked by", links(D.techs.filter((t) => t.bld === x.id).map((t) => ln("techs", t.id))))].join("");
+};
+R.facilities = (x) => kv([["Category", esc(x.cat)], ["Work", esc(x.work)], ["Tier", `T${x.tier}`], ...(x.p1 ? [[x.p1[0], esc(x.p1[1])]] : []), ...(x.p2 ? [[x.p2[0], esc(x.p2[1])]] : [])]);
+R.techs = (x) => [x.desc ? `<p class="desc">${esc(x.desc)}</p>` : "", kv([["Branch", esc(x.branch)], ["Effect", esc(x.eff)], ["Target", x.bld ? ln("buildings", x.bld) : esc(x.target)]])].join("");
+R.quests = (x) => `<p class="desc">${rich(x.desc)}</p>` + kv([["Kind", esc(x.goal)], ["Order", `#${x.id}`]]);
+R.achievements = (x) => kv([["Group", esc(x.group)], ["Goal", `${esc(x.metric)}: <span class="num">${x.target}</span>`]]);
+R.stats = (x) => [x.desc ? `<p class="desc">${esc(x.desc)}</p>` : "", x.notes.length ? `<div>${x.notes.map((n) => `<p class="desc">${rich(n)}</p>`).join("")}</div>` : "",
+  kv([["Group", esc(x.grp)], ["Applies to", esc(x.scope)], ["Format", { pct: "Percent", int: "Integer", dec: "Decimal", mult: "Multiplier" }[x.fmt]], ["Base value", `<span class="num">${x.base}</span>`]]),
+  sec("Items with this main stat", (() => { const a = D.items.filter((i) => i.stats.some(([s]) => s === x.id)); return a.length ? links(a.slice(0, 40).map((i) => ln("items", i.id))) + (a.length > 40 ? `<p class="note">and ${a.length - 40} more</p>` : "") : ""; })())].join("");
+R.buffs = (x) => [kv([["Effect", `${ln("stats", x.stat)} <span class="num">+${x.val}</span>`], ["Duration", `<span class="num">${x.dur}s</span>`]]),
+  sec("Applied by", links(D.skills.filter((s) => s.buff === x.id).map((s) => ln("skills", s.id))))].join("");
+
+/* ---------- state & rendering ---------- */
+const state = { cat: "items", filters: {}, q: "", sel: null, mode: "browse", limit: 200, sort: {}, grid: {} };
+const hist = [];            // previously opened entries, for the Back button
+const listScroll = {};      // scroll position per category, restored when returning to a list
+const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } };
+const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+const prefs = load("btc-prefs", {});
+let stars = load("btc-stars", []);
+if (!Array.isArray(stars)) stars = [];
+state.grid = prefs.grid || {};
+function savePrefs() { store("btc-prefs", { cat: state.cat, grid: state.grid }); }
+const GROUPS = [...new Set(CATS.map((c) => c.g))];
+
+function renderNav() {
+  const g = CAT[state.cat].g;
+  $("#groups").innerHTML = GROUPS.map((x) => `<button type="button" data-group="${esc(x)}" aria-current="${x === g && !state.q}">${esc(x)}</button>`).join("");
+  $("#subnav").innerHTML = CATS.filter((c) => c.g === g).map((c) => {
+    const n = c.count ? c.count() : D[c.k].length;
+    return `<button type="button" data-cat="${c.k}" aria-current="${state.cat === c.k && !state.q && state.mode === "browse"}">${esc(c.t)}<span>${n}</span></button>`;
+  }).join("");
+}
+function matches(x, q) {
+  return (x.n && String(x.n).toLowerCase().includes(q)) || (x.cn && String(x.cn).includes(q));
+}
+function currentRows() {
+  if (state.q) {
+    const q = state.q.toLowerCase(), out = [];
+    DATA_CATS.forEach((c) => D[c.k].forEach((x) => { if (matches(x, q)) out.push([c.k, x]); }));
+    return out;
+  }
+  const c = CAT[state.cat];
+  let rows = D[c.k].filter((x) => c.filters.every(([name, fn], i) => { const v = state.filters[i]; return v == null || fn(x) === v; }));
+  const s = state.sort[c.k];
+  if (s) {
+    const fn = s === "Name" ? null : (SORTS[c.k] || []).find(([n]) => n === s)?.[1];
+    rows = rows.slice().sort(fn ? (a, b) => fn(a) - fn(b) || a.id - b.id : (a, b) => String(a.n).localeCompare(String(b.n)));
+  }
+  return rows.map((x) => [c.k, x]);
+}
+const starred = (tok) => stars.includes(tok);
+function rowsHtml(rows, showCat) {
+  const grid = !showCat && !state.q && state.grid[state.cat] && GRIDABLE.has(state.cat);
+  if (grid) {
+    return `<div class="grid">${rows.map(([k, x]) => {
+      const qcls = k === "items" && x.rarity ? ` class="q${x.rarity}"` : "";
+      return `<button type="button" class="tile" data-go="${k}-${x.id}" title="${esc(x.n)}">${iconOf(k, x, k === "heroes" ? 72 : 56)}<b${qcls}>${esc(x.n)}</b><i>${esc(x.cn)}</i></button>`;
+    }).join("")}</div>`;
+  }
+  return rows.map(([k, x]) => {
+    const m = showCat ? [CAT[k].t, CAT[k].meta(x)[0]] : CAT[k].meta(x);
+    const qcls = k === "items" && x.rarity ? ` class="q${x.rarity}"` : "";
+    const tok = `${k}-${x.id}`;
+    return `<button type="button" class="row" data-go="${tok}">${iconOf(k, x, 44)}<span class="nm"><b${qcls}>${esc(x.n)}${starred(tok) ? `<span class="star-mark" aria-label="starred">★</span>` : ""}</b><i>${esc(x.cn)}</i></span><span class="m1">${esc(m[0] ?? "")}</span><span class="m2">${esc(m[1] ?? "")}</span></button>`;
+  }).join("");
+}
+const KBD = `<span class="kbd"><kbd>/</kbd> search · <kbd>↑</kbd><kbd>↓</kbd> move · <kbd>Enter</kbd> open · <kbd>Esc</kbd> back</span>`;
+
+function renderBrowse() {
+  const c = CAT[state.cat];
+  if (!state.q && c.view) {
+    $("#main").innerHTML = `<div class="listhead"><h1>${esc(c.t)}</h1><p class="blurb">${esc(c.blurb)}</p></div><div id="rows" class="bare">${c.view()}</div>`;
+    return;
+  }
+  const rows = currentRows();
+  if (state.q) {
+    let body;
+    if (!rows.length) body = `<div class="empty">Nothing matches. Try another spelling, or search in Chinese.</div>`;
+    else {
+      const groups = new Map();
+      rows.forEach((r) => { if (!groups.has(r[0])) groups.set(r[0], []); groups.get(r[0]).push(r); });
+      body = [...groups].map(([k, arr]) => `<h3 class="grp">${esc(CAT[k].t)} · ${arr.length}</h3>${rowsHtml(arr.slice(0, 40), false)}${arr.length > 40 ? `<p class="note" style="padding:6px 16px 10px;margin:0">${arr.length - 40} more. Narrow the search to see them.</p>` : ""}`).join("");
+    }
+    $("#main").innerHTML = `<div class="listhead"><h1>Search <small>${rows.length} results for “${esc(state.q)}”</small></h1></div><div id="rows">${body}</div>`;
+    return;
+  }
+  const fhtml = c.filters.map(([name, fn], i) => {
+    const vals = [...new Set(D[c.k].map(fn))].filter((v) => v !== "" && v != null);
+    if (vals.length < 2 || vals.length > 24) return "";
+    const order = name === "Tier" || name === "Rank" ? vals : vals.sort((a, b) => String(a).localeCompare(String(b), "en", { numeric: true }));
+    return `<div class="fgroup"><span>${esc(name)}</span><button type="button" class="chip" data-f="${i}" data-v="" aria-pressed="${state.filters[i] == null}">All</button>${order.map((v) => `<button type="button" class="chip" data-f="${i}" data-v="${esc(v)}" aria-pressed="${state.filters[i] === v}">${esc(v)}</button>`).join("")}</div>`;
+  }).join("");
+  const sorts = [["", "Game order"], ["Name", "Name A–Z"], ...(SORTS[c.k] || []).map(([n]) => [n, n])];
+  const cur = state.sort[c.k] || "";
+  const gridOn = !!state.grid[c.k] && GRIDABLE.has(c.k);
+  const tools = `<div class="toolbar"><label for="sort">Sort <select id="sort">${sorts.map(([v, l]) => `<option value="${esc(v)}"${v === cur ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></label>
+    ${GRIDABLE.has(c.k) ? `<div class="seg" role="group" aria-label="View"><button type="button" data-view="list" aria-pressed="${!gridOn}">List</button><button type="button" data-view="grid" aria-pressed="${gridOn}">Icons</button></div>` : ""}${KBD}</div>`;
+  let body;
+  if (!rows.length) body = `<div id="rows"><div class="empty">Nothing matches. Try another filter.</div></div>`;
+  else {
+    const shown = rows.slice(0, state.limit);
+    body = `<div id="rows"${gridOn ? ` class="bare"` : ""}>${rowsHtml(shown, false)}</div>` + (rows.length > shown.length ? `<button type="button" class="chip more" id="more">Show ${Math.min(200, rows.length - shown.length)} more of ${rows.length - shown.length}</button>` : "");
+  }
+  $("#main").innerHTML = `<div class="listhead"><h1>${esc(c.t)} <small>${rows.length} of ${D[c.k].length}</small></h1><p class="blurb">${esc(c.blurb)}</p>${fhtml ? `<div class="filters">${fhtml}</div>` : ""}${tools}</div>${body}`;
+}
+
+function parseTok(tok) { const [k, id] = tok.split(/-(?=\d+$)/); return [k, Number(id)]; }
+function renderEntry() {
+  const [k, id] = parseTok(state.sel);
+  const x = T(k, id);
+  if (!x) { state.mode = "browse"; return renderBrowse(); }
+  const big = k === "heroes" ? 150 : k === "foes" ? 110 : 96;
+  let body = R[k](x), lede = "";
+  const m = body.match(/^<p class="desc">([\s\S]*?)<\/p>/);
+  if (m) { lede = m[1]; body = body.slice(m[0].length); }
+  const prev = hist.length ? (() => { const [pk, pid] = parseTok(hist[hist.length - 1]); return (T(pk, pid) || {}).n; })() : null;
+  const listName = state.q ? `search “${state.q}”` : CAT[state.cat].t;
+  const isStar = starred(state.sel);
+  $("#main").innerHTML = `<article>
+    <div class="crumbs"><button type="button" class="tbtn" id="back">← ${esc(prev ? prev : listName)}</button>${prev ? `<button type="button" class="tbtn" id="tolist">${esc(listName)}</button>` : ""}<span class="sp"></span><button type="button" class="tbtn" id="star" aria-pressed="${isStar}">${isStar ? "★ Starred" : "☆ Star"}</button></div>
+    <header class="ehead"><div class="portrait">${iconOf(k, x, big)}</div><div><div class="kind">${esc(CAT[k].t.replace(/s$/, ""))}</div><h1>${esc(x.n)}</h1><div class="cn">${esc(x.cn)}</div>${lede ? `<p class="lede">${lede}</p>` : ""}</div></header>
+    <div class="ebody">${body}</div></article>`;
+}
+function render() {
+  renderNav();
+  if (state.mode === "entry" && state.sel) renderEntry(); else renderBrowse();
+}
+function setHash(h) { try { history.replaceState(null, "", `#${h}`); } catch {} }
+function toList() {
+  state.mode = "browse"; hist.length = 0;
+  render();
+  setHash(state.q ? "" : state.cat);
+  window.scrollTo(0, listScroll[state.q ? "_q" : state.cat] || 0);
+  const cur = state.sel && document.querySelector(`#rows [data-go="${state.sel}"]`);
+  if (cur) cur.focus({ preventScroll: true });
+}
+function go(token, opts = {}) {
+  const [k] = parseTok(token);
+  if (!by[k]) return;
+  if (state.mode === "browse") { listScroll[state.q ? "_q" : state.cat] = window.scrollY; hist.length = 0; }
+  else if (!opts.back && state.sel && state.sel !== token) { hist.push(state.sel); if (hist.length > 60) hist.shift(); }
+  // Opening from a list keeps that list as "home"; opening a linked entry from another category follows it.
+  if (!state.q && !CAT[state.cat].view && state.cat !== k && state.mode === "browse") { state.cat = k; state.filters = {}; }
+  state.sel = token; state.mode = "entry";
+  render();
+  window.scrollTo(0, 0);
+  if (!opts.noHash) setHash(token);
+}
+function setCat(k) {
+  state.cat = k; state.filters = {}; state.q = ""; state.limit = 200; state.mode = "browse"; hist.length = 0; $("#q").value = "";
+  render(); savePrefs(); window.scrollTo(0, 0); setHash(k);
+}
+function back() {
+  const prev = hist.pop();
+  if (prev) go(prev, { back: true }); else toList();
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-go],[data-cat],[data-group],[data-f],[data-view],[data-home],#more,#back,#tolist,#star");
+  if (!t) return;
+  e.preventDefault();
+  if (t.id === "more") { state.limit += 200; renderBrowse(); return; }
+  if (t.id === "back") { back(); return; }
+  if (t.id === "tolist") { toList(); return; }
+  if (t.id === "star") {
+    stars = starred(state.sel) ? stars.filter((s) => s !== state.sel) : [state.sel, ...stars];
+    store("btc-stars", stars); render(); return;
+  }
+  if (t.dataset.home) { setCat("items"); return; }
+  if (t.dataset.view) { state.grid[state.cat] = t.dataset.view === "grid"; savePrefs(); renderBrowse(); return; }
+  if (t.dataset.group) { const first = CATS.find((c) => c.g === t.dataset.group); if (first) setCat(first.k); return; }
+  if (t.dataset.cat) { setCat(t.dataset.cat); return; }
+  if (t.dataset.f != null) { state.filters[t.dataset.f] = t.dataset.v === "" ? null : t.dataset.v; state.limit = 200; renderBrowse(); return; }
+  go(t.dataset.go);
+});
+document.addEventListener("change", (e) => {
+  if (e.target.id === "sort") { state.sort[state.cat] = e.target.value || null; state.limit = 200; renderBrowse(); }
+});
+let qt;
+$("#q").addEventListener("input", (e) => {
+  clearTimeout(qt);
+  qt = setTimeout(() => { state.q = e.target.value.trim(); state.limit = 200; state.mode = "browse"; hist.length = 0; render(); window.scrollTo(0, 0); }, 140);
+});
+document.addEventListener("keydown", (e) => {
+  const ae = document.activeElement;
+  const inField = /^(INPUT|SELECT|TEXTAREA)$/.test(ae?.tagName || "");
+  if (e.key === "/" && !inField) { e.preventDefault(); $("#q").focus(); $("#q").select(); return; }
+  if (e.key === "Escape") {
+    if (inField && $("#q").value) { $("#q").value = ""; state.q = ""; state.mode = "browse"; render(); return; }
+    if (inField) { ae.blur(); return; }
+    if (state.mode === "entry") back();
+    return;
+  }
+  if ((e.key === "ArrowDown" || e.key === "ArrowUp") && state.mode === "browse" && (!inField || ae === $("#q"))) {
+    const list = [...document.querySelectorAll("#rows [data-go]")];
+    if (!list.length) return;
+    e.preventDefault();
+    let i = list.indexOf(ae);
+    i = e.key === "ArrowDown" ? Math.min(list.length - 1, i + 1) : Math.max(0, i - 1);
+    list[i].focus(); list[i].scrollIntoView({ block: "nearest" });
+  }
+});
+
+fetch("compendium.json").then((r) => r.json()).then((data) => {
+  D = data;
+  for (const c of DATA_CATS) by[c.k] = new Map(D[c.k].map((x) => [x.id, x]));
+  D._gov = new Set(D.locs.filter((l) => l.gov).map((l) => l.gov));
+  if (prefs.cat && CAT[prefs.cat]) state.cat = prefs.cat;
+  const h = (location.hash || "").slice(1);
+  if (CAT[h]) state.cat = h;
+  if (h && /^[a-z]+-\d+$/.test(h) && by[parseTok(h)[0]]) { state.cat = parseTok(h)[0]; go(h, { noHash: true }); }
+  else render();
+}).catch(() => { $("#main").innerHTML = `<div class="empty">The data file failed to load. Reload the page to try again.</div>`; });
+</script>
+
+</body>
+</html>
