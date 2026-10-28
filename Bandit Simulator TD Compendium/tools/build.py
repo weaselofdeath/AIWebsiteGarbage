@@ -55,13 +55,18 @@ for k, b in (('研究', 'Study Mat'),):
     for t in range(1, 11):
         MANUAL.setdefault(f'{k}{t}', f'{b} {t}')
 
+# Typos in the game's official English text.
+TYPOS = [('WorK ', 'Work '), ('Strategem', 'Stratagem')]
+
 def en(s):
     if not isinstance(s, str) or not s:
         return s
     v = LAU.get(s)
-    if v and v != s:
-        return v
-    return MANUAL.get(s, v or s)
+    if not (v and v != s):
+        v = MANUAL.get(s, v or s)
+    for a, b in TYPOS:
+        v = v.replace(a, b)
+    return v
 
 def clean(s):  # strip BBCode tags used by the game
     return re.sub(r'\[/?(?:color|size)[^\]]*\]', '', s) if isinstance(s, str) else s
@@ -185,7 +190,7 @@ for r in wp[1:]:
     it = dict(id=r[0], n=en(r[1]), cn=r[1], tier=r[3], cat=CAT.get(cat, cat), kind=en(r[5]),
               slot=SLOT.get(r[6], '') if r[6] else '', sub=en(r[7]),
               stats=[[r[8 + k], r[11 + k]] for k in range(3) if r[8 + k]],
-              affix=en(r[23]) if r[23] else '')
+              affix=en(r[23]) if r[23] else '', sl=r[6] or 0)
     it['icon'] = icon(F_ITEM, r[2])
     src = {}
     if cat == '普通':
@@ -243,6 +248,7 @@ for r in js[1:]:
         continue
     h = dict(id=r[0], n=en(r[1]), cn=r[1], cls=r[6], rarity=r[49], rarityN=HERO_RARITY.get(r[49], ''),
              apt=[(r[10] + r[13]) / 10, (r[11] + r[14]) / 10, (r[12] + r[15]) / 10],
+             growth=[r[10] / 10, r[11] / 10, r[12] / 10], elix=[r[13] / 10, r[14] / 10, r[15] / 10],
              skills=[[r[31 + k], r[22 + k]] for k in range(9)],
              talents=[[r[51 + k], r[54 + k]] for k in range(3) if r[51 + k]],
              sex='F' if r[57] == '女' else 'M',
@@ -257,7 +263,7 @@ for r in zy[1:]:
         continue
     classes.append(dict(id=r[0], n=en(r[1]), cn=r[1], tier=r[3], type=CLASSTYPE.get(r[4], ''),
                         desc=r[27] or en(r[5]), pre=[x for x in r[10:13] if x], coef=r[13:17],
-                        skills=[x for x in r[19:22] if x], dmg=DMG.get(r[26], ''),
+                        skills=[x for x in r[19:22] if x], dmg=DMG.get(r[26], ''), tid=r[4], did=r[26],
                         icon=icon(F_CLASS, r[1]) or icon(F_CLASS, r[2])))
 
 # buffs
@@ -281,8 +287,10 @@ for r in jn[1:]:
     sk = dict(id=r[0], n=en(r[1]), cn=r[1], type=SKILL_TYPE.get(r[3], r[3]), elem=ELEM.get(r[6], ''),
               q=r[7], qN=SKILL_QUALITY.get(r[7], ''), dmg=DMG.get(r[8], '') if r[3] != '被动' else '',
               coef=r[10], sp=r[16], cd=r[17], desc=rich(d), icon=icon(F_SKILL, r[2]) or icon(F_SKILL, r[1]))
+    sk['calc'] = dict(kind={'普攻': 1, '技能': 2, '被动': 3}.get(r[3], 0), dl=r[5], el=r[6], dt=r[8], hits=r[9],
+                      k=r[10], aoe=r[14], aoe2=r[15], sp=r[16], cd=r[17], side=r[18], buff=r[19], prod=r[32])
     if r[3] == '被动':
-        sk['passive'] = [[r[11 + k], r[36 + k]] for k in range(3) if r[11 + k]]
+        sk['passive'] = [[r[11 + k], r[37 + k]] for k in range(3) if r[11 + k]]
     if b and r[3] != '被动':
         sk['buff'] = b['id']
     skills.append(sk)
@@ -373,7 +381,8 @@ achievements = [dict(id=r[0], n=en(r[1]), cn=r[1], group=en(r[2]), metric=en(r[3
                 for r in cj[1:] if r[1]]
 
 data = dict(
-    meta=dict(game='塔防山贼模拟器', tiers=TIER, slots=SLOT, skills9=SKILLS9, quality=ITEM_QUALITY),
+    meta=dict(game='塔防山贼模拟器', tiers=TIER, slots=SLOT, skills9=SKILLS9, quality=ITEM_QUALITY,
+              kz=[r[:6] for r in T('kz')], yx=[r[1:7] for r in T('yx')]),
     stats=list(stats.values()), items=items, sets=sets, mats=mats, beasts=beasts, heroes=heroes,
     classes=classes, skills=skills, talents=talents, buffs=buffs, foes=foes, locs=locs,
     buildings=buildings, facilities=facilities, techs=techs, quests=quests, achievements=achievements,

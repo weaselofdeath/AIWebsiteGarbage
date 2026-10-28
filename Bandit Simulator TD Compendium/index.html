@@ -202,7 +202,72 @@ button:focus-visible, a:focus-visible, .row:focus-visible { outline: 2px solid v
 .lcard .facts { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; color: var(--ink-3); }
 .lcard .facts b { color: var(--ink); font-weight: 600; }
 
+/* builds */
+.rb { margin: 0 0 36px; padding: 20px 22px; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); display: grid; gap: 16px; }
+.rb h2 { margin: 0; font: 24px/1.1 var(--f-display); display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.rb h2 small { font: 14px var(--f-body); color: var(--ink-3); }
+.rbctl { display: grid; gap: 8px; }
+.rbctl .fgroup { gap: 4px; }
+.tierseg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: var(--r); overflow: hidden; }
+.tierseg button { border: 0; border-right: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); font: 600 13px var(--f-mono); padding: 5px 10px; cursor: pointer; }
+.tierseg button:last-child { border-right: 0; }
+.tierseg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.rbgrid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px 32px; }
+.score { display: flex; gap: 10px 22px; flex-wrap: wrap; align-items: baseline; }
+.score .big { font: 600 28px var(--f-mono); color: var(--jade); }
+.score .rank { font-weight: 700; color: var(--seal); }
+.gear { display: grid; gap: 6px; }
+.gear > div { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 10px; align-items: center; }
+.gear .sl { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+.mini { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 16px; font-size: 14px; }
+.mini span { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--rule); padding: 2px 0; }
+.mini span b { font: 13.5px var(--f-mono); font-weight: 600; }
+.besttasks { display: flex; flex-wrap: wrap; gap: 6px; }
+.besttasks button { border: 1px solid var(--rule); background: var(--paper); color: var(--ink-2); font: 13.5px var(--f-body); padding: 2px 10px; border-radius: 999px; cursor: pointer; }
+.besttasks button b { color: var(--seal); font-family: var(--f-mono); margin-left: 4px; }
+.caveat { font-size: 13.5px; color: var(--ink-3); margin: 0; max-width: 90ch; }
+.bld { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 14px; min-width: 0; }
+.panel h3 { margin: 0; font: 13px var(--f-body); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-3); }
+.form { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px 14px; }
+.form label { display: grid; gap: 3px; font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.form select, .form input, .slotrow select, .slotrow input, .affix select, .affix input { font: 14px var(--f-body); padding: 5px 7px; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); color: var(--ink); min-width: 0; width: 100%; }
+.slotrow { display: grid; grid-template-columns: 70px 44px minmax(0, 1fr) 96px 64px; gap: 6px 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--rule); }
+.slotrow .sl { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.gicon { width: 44px; height: 44px; display: grid; place-items: center; border: 2px solid var(--rule); border-radius: 8px; background: var(--paper); }
+.gicon.q1, .gicon.q2, .gicon.q3, .gicon.q4, .gicon.q5, .gicon.q6 { border-color: currentColor; }
+.gicon.empty { border-style: dashed; }
+.affixes { grid-column: 3 / -1; display: grid; gap: 4px; }
+.form .flabel { display: grid; gap: 3px; font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.combo { position: relative; }
+.combo input { font: 14px var(--f-body); padding: 5px 7px; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); color: var(--ink); width: 100%; }
+.combo-list { position: absolute; left: 0; top: calc(100% + 2px); z-index: 20; min-width: 100%; width: max-content; max-width: min(340px, 86vw); max-height: 300px; overflow-y: auto; margin: 0; padding: 4px 0; list-style: none; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; box-shadow: 0 8px 24px rgba(0, 0, 0, .18); }
+.combo-list li { display: flex; gap: 8px; align-items: center; padding: 3px 10px 3px 6px; cursor: pointer; font: 14px var(--f-body); color: var(--ink); white-space: nowrap; }
+.combo-list li i { font: normal 13px var(--f-cn); color: var(--ink-3); }
+.combo-list li:hover { background: var(--hover); }
+.combo-list li.cur { font-weight: 700; }
+.combo-list li.hl { background: var(--jade); color: var(--sheet); }
+.combo-list li.hl i { color: inherit; opacity: .8; }
+.slothead { border-top: 0; padding: 0 0 2px; }
+.slothead span, .affhead span { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+.affhead { display: grid; grid-template-columns: minmax(0, 1fr) 70px 28px; gap: 6px; margin-top: 4px; }
+.bhead { display: flex; gap: 16px; align-items: center; padding-bottom: 4px; }
+.bhead .portrait { padding: 4px; flex: none; }
+.bhead b { display: block; font: 26px/1.1 var(--f-display); }
+.bhead i { font: normal 15px var(--f-cn); color: var(--ink-3); }
+.bhead .links { margin-top: 6px; }
+.affix { display: grid; grid-template-columns: minmax(0, 1fr) 70px 28px; gap: 6px; }
+.affix button, .addaff { border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-3); border-radius: 6px; cursor: pointer; font: 13px var(--f-body); }
+.addaff { justify-self: start; padding: 2px 10px; }
+table.tasks td:first-child { white-space: nowrap; }
+table.tasks tr.cur td { background: var(--hover); }
+.btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.btnrow .tbtn.primary { background: var(--jade); border-color: var(--jade); color: var(--sheet); }
+
+@media (max-width: 900px) { .rbgrid, .bld { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
+  .slotrow { grid-template-columns: 52px 44px minmax(0, 1fr) 84px; }
+  .slotrow .lv { display: none; }
   .row { grid-template-columns: 44px minmax(0, 1fr) auto; padding: 8px 12px; }
   .row .m2 { display: none; }
   .ehead { grid-template-columns: minmax(0, 1fr); padding: 18px; gap: 14px; }
@@ -216,6 +281,7 @@ button:focus-visible, a:focus-visible, .row:focus-visible { outline: 2px solid v
 
 </head>
 <body>
+
 <div class="app">
   <header class="mast">
     <div class="wrap mast-in">
@@ -234,6 +300,7 @@ button:focus-visible, a:focus-visible, .row:focus-visible { outline: 2px solid v
   <main class="wrap" id="main"><div class="empty">Loading the ledger…</div></main>
 </div>
 
+<script src="calc.js"></script>
 <script>
 "use strict";
 let D = null;
@@ -278,6 +345,10 @@ const CATS = [
     blurb: "Cities open one after another: each needs the previous city at danger level 50. Wild areas branch off every third city and hold the spirit beasts that drop set and core materials." },
   { k: "starred", t: "Starred", g: "Charts", view: () => viewStarred(), count: () => stars.length,
     blurb: "Entries you starred. Stars are saved in this browser only." },
+  { k: "builder", t: "Builder", g: "Builds", view: () => viewBuilder(), count: () => D.heroes.length,
+    blurb: "Put a hero together: class, level, gear, quality and affixes. Stats are computed with the game's own formulas, and every task is scored live. Optimize fills in the best class and gear for the task you pick." },
+  { k: "besthero", t: "Best heroes", g: "Builds", view: () => viewBest(), count: () => TASK_LIST().length,
+    blurb: "Every hero ranked for one task at one tier, each using its own best build. Pick a row to see that build." },
   { k: "items", t: "Items", g: "Gear & goods", blurb: "Equipment, set pieces, cores, elixirs and Soul Tower treasures. Each entry shows where to get it: the blueprint, the materials, merge inputs, or the tower floor.",
     filters: [["Type", (x) => x.cat], ["Slot", (x) => x.slot || "—"], ["Tier", (x) => tierName(x.tier)]],
     meta: (x) => [x.cat, `${tierName(x.tier)}${x.sub ? " · " + x.sub : ""}`] },
@@ -311,6 +382,10 @@ const CATS = [
   { k: "buffs", t: "Buffs", g: "Reference", blurb: "Timed status effects applied by active skills.", filters: [], meta: (x) => [statName(x.stat), `${x.dur}s`] },
 ];
 const CAT = Object.fromEntries(CATS.map((c) => [c.k, c]));
+// Singular label shown above an entry's name.
+const KIND = { items: "Item", sets: "Gear set", mats: "Material", beasts: "Beast material", heroes: "Hero", classes: "Class", skills: "Skill",
+  talents: "Talent", locs: "Place", foes: "Enemy", buildings: "Building", facilities: "Facility", techs: "Technology", quests: "Guide quest",
+  achievements: "Achievement", stats: "Stat", buffs: "Buff" };
 const DATA_CATS = CATS.filter((c) => !c.view);
 const aptSum = (h) => h.apt[0] + h.apt[1] + h.apt[2];
 const SORTS = {
@@ -456,7 +531,7 @@ R.items = (x) => {
   const parts = [];
   const tierLine = x.cat === "Treasure" && x.rarity ? qpill(x.rarity, D.meta.quality[x.rarity]) : esc(tierName(x.tier));
   parts.push(kv([["Type", esc(x.cat)], ["Tier", tierLine], ["Slot", esc(x.slot)], ["Kind", esc(x.sub)], ["Random affixes", esc(x.affix)], ["Set", x.set ? ln("sets", x.set) + ` <span class="note">piece ${x.piece}</span>` : ""]]));
-  if (x.stats.length) parts.push(sec("Main stats", `<table class="t"><tr><th>Stat</th><th class="num">Weight</th></tr>${x.stats.map(([s, c]) => `<tr><td>${ln("stats", s)}</td><td class="num">${c}%</td></tr>`).join("")}</table><p class="note">Actual numbers scale with the item's level, tier and rolled quality. The weight is the share of the full value this item gets for that stat.</p>`));
+  if (x.stats.length) parts.push(sec("Main stats", `<table class="t"><tr><th>Stat</th><th class="num">Weight</th></tr>${x.stats.map(([s, c]) => `<tr><td>${ln("stats", s)}</td><td class="num">${c}%</td></tr>`).join("")}</table><p class="note">Actual numbers scale with the item's level, tier and rolled quality. The weight is the share of the full value this item gets for that stat.</p>${itemValues(x)}`));
   const need = { bp: new Map(), mats: new Set(), beasts: new Set(), places: new Set() };
   parts.push(sec("Recipe tree", `<ul class="rtree">${recipeNode(x, 0, need)}</ul>`));
   const needHtml = [];
@@ -468,6 +543,11 @@ R.items = (x) => {
   if (usedFor.length) parts.push(sec(`Used to make (${usedFor.length})`, links(usedFor.map((i) => ln("items", i.id)))));
   return parts.join("");
 };
+function itemValues(x) {
+  if (!CALC || !x.sl || !x.stats.length) return "";
+  const rows = [3, 5, 6].map((q) => { const p = CALC.gearPiece(x.id, { quality: q }); return [q, x.stats.map(([s, k]) => CALC.gearStat(s, x.tier, p.lv, p.roll, k, q))]; });
+  return `<div class="tscroll"><table class="t"><tr><th>Quality, max level</th>${x.stats.map(([s]) => `<th class="num">${esc(statName(s))}</th>`).join("")}</tr>${rows.map(([q, vals]) => `<tr><td>${qpill(q, D.meta.quality[q])} <span class="note">+${10 + 5 * (q - 1)}</span></td>${vals.map((v, i) => `<td class="num">${statVal(x.stats[i][0], v)}</td>`).join("")}</tr>`).join("")}</table></div><p class="note">Values at an average quality roll.</p>`;
+}
 function setBonus(sid, coef) {
   const f = (stat(sid) || {}).fmt;
   if (f === "pct") return `+${fmtNum(coef / 10)}%`;
@@ -475,7 +555,7 @@ function setBonus(sid, coef) {
   return `+${fmtNum(coef / 5)}`;
 }
 R.sets = (x) => [
-  sec("Set bonuses", `<table class="t"><tr><th>Pieces</th><th>Stat</th><th class="num">Bonus</th></tr>${x.bonus.map(([p, s, c]) => `<tr><td class="num">${p}</td><td>${ln("stats", s)}</td><td class="num">${setBonus(s, c)}</td></tr>`).join("")}</table><p class="note">Shown at set level 4. The bonus grows with the set's combined level above that.</p>`),
+  sec("Set bonuses", `<table class="t"><tr><th>Pieces</th><th>Stat</th><th class="num">Bonus</th></tr>${x.bonus.map(([p, s, c]) => `<tr><td class="num">${p}</td><td>${ln("stats", s)}</td><td class="num">${setBonus(s, c)}</td></tr>`).join("")}</table><p class="note">Shown at the minimum set score of 4. The score is the total quality of the equipped pieces (Mundane 1 up to Mythic 6), so four Legendary pieces (score 20) give five times these values.</p>`),
   sec(`Pieces (${x.pieces.length})`, links(x.pieces.map((p) => ln("items", p)))),
 ].join("");
 R.mats = (x) => {
@@ -524,7 +604,7 @@ R.skills = (x) => {
     kv([["Type", esc(x.type)], ["Grade", qpill(Math.min(6, x.q + 1), x.qN)], ["Element", esc(x.elem)], ["Damage", esc(x.dmg)],
       ["Multiplier", x.type !== "Passive" ? `<span class="num">${x.coef}%</span>` : ""], ["SP cost", x.sp ? `<span class="num">${x.sp}</span>` : ""], ["Cooldown", x.cd ? `<span class="num">${x.cd}s</span>` : ""],
       ["Buff", x.buff ? ln("buffs", x.buff) : ""]]),
-    x.passive ? sec("Passive effects", `<table class="t">${x.passive.map(([s, v]) => `<tr><td>${ln("stats", s)}</td><td class="num">${v}</td></tr>`).join("")}</table><p class="note">Raw coefficients from the game data. The in-game value scales with class level.</p>`) : "",
+    x.passive ? sec("Passive effects", `<table class="t">${x.passive.map(([s, v]) => `<tr><td>${ln("stats", s)}</td><td class="num">${(stat(s) || {}).fmt === "mult" ? `+×${fmtNum(v / 1000)}` : `+${statVal(s, v / 10)}`}</td></tr>`).join("")}</table><p class="note">Boosted further by the Passive Multiplier stat.</p>`) : "",
     sec("Granted by", links(cls.map((c) => ln("classes", c.id))))].join("");
 };
 R.talents = (x) => {
@@ -582,6 +662,262 @@ R.stats = (x) => [x.desc ? `<p class="desc">${esc(x.desc)}</p>` : "", x.notes.le
 R.buffs = (x) => [kv([["Effect", `${ln("stats", x.stat)} <span class="num">+${x.val}</span>`], ["Duration", `<span class="num">${x.dur}s</span>`]]),
   sec("Applied by", links(D.skills.filter((s) => s.buff === x.id).map((s) => ln("skills", s.id))))].join("");
 
+/* ---------- builds ---------- */
+let CALC = null, BUILDS = null, buildsLoading = null;
+const TASK_LIST = () => BSTDCalc.TASKS;
+const taskOf = (id) => TASK_LIST().find((t) => t.id === id);
+const SLOT_N = { 1: "Main", 2: "Off", 3: "Armor", 4: "Accessory", 5: "Core", 6: "Relic" };
+const tierInfo = (t) => `Breakthrough stage ${t}: hero level up to ${30 * (t + 1)}, ${tierName(t + 1)} gear`;
+function loadBuilds() {
+  if (BUILDS) return Promise.resolve(BUILDS);
+  if (!buildsLoading) buildsLoading = fetch("builds.json").then((r) => r.json()).then((b) => (BUILDS = b)).catch((e) => { buildsLoading = null; throw e; });
+  return buildsLoading;
+}
+function whenBuilds(rerender) {
+  loadBuilds().then(rerender, () => { const el = document.querySelector("[data-bload]"); if (el) el.textContent = "The build data failed to load. Reload the page to try again."; });
+  return `<p class="note" data-bload>Loading builds…</p>`;
+}
+function fmtBig(v) {
+  const a = Math.abs(v);
+  if (a >= 1e9) return `${(v / 1e9).toFixed(2)}B`;
+  if (a >= 1e6) return `${(v / 1e6).toFixed(2)}M`;
+  if (a >= 1e4) return `${(v / 1e3).toFixed(1)}K`;
+  return (Math.round(v * 10) / 10).toLocaleString("en-US");
+}
+const fmtScore = (task, v) => `${fmtBig(v)}${taskOf(task).work ? " /s" : " DPS"}`;
+const taskUnit = (task) => (taskOf(task).work ? "output per second" : "damage per second");
+function recRow(heroId, tier, task) {
+  const r = BUILDS.heroes[heroId];
+  return r ? r[tier * BUILDS.tasks.length + BUILDS.tasks.indexOf(task)] : null;
+}
+function rowBuild(heroId, tier, row) {
+  const a = BUILDS.assumptions[tier], b = CALC.baseBuild(heroId, row[0], a);
+  row.slice(1, 7).forEach((id, i) => { if (id) b.gear[i + 1] = CALC.gearPiece(id, a); });
+  return b;
+}
+const rankCache = new Map();
+function ranking(tier, task) {
+  const key = `${tier}:${task}`;
+  if (!rankCache.has(key)) {
+    const list = D.heroes.map((h) => { const r = recRow(h.id, tier, task); return r ? [h.id, r[7], r[0]] : null; }).filter(Boolean);
+    list.sort((a, b) => b[1] - a[1]);
+    rankCache.set(key, list);
+  }
+  return rankCache.get(key);
+}
+const rankOf = (heroId, tier, task) => ranking(tier, task).findIndex((r) => r[0] === heroId) + 1;
+function bestTasks(heroId, tier) {
+  return TASK_LIST().map((t) => [t.id, rankOf(heroId, tier, t.id)]).sort((a, b) => a[1] - b[1]);
+}
+function activeSets(b) {
+  const cnt = new Map();
+  Object.values(b.gear).forEach((g) => { const it = T("items", g.id); if (it && it.set) cnt.set(it.set, (cnt.get(it.set) || new Set()).add(it.piece)); });
+  return [...cnt].filter(([, p]) => p.size >= 2).map(([sid, p]) => {
+    const st = T("sets", sid);
+    return `${ln("sets", sid)} <span class="note">${p.size} pieces: ${st.bonus.filter(([n]) => p.size >= n).map(([, s]) => esc(statName(s))).join(", ")}</span>`;
+  });
+}
+function keyStats(b, task) {
+  const t = taskOf(task), S = CALC.panel(b), cls = T("classes", b.cls);
+  let ids;
+  if (t.work) { const k = t.work, cat = Math.floor((k - 1) / 3), apt = [0, 1, 2, 3, 1, 2, 3, 1, 3, 2][k]; ids = [39 + k, apt, 49, 51, 52, 53 + cat, 55 + k, 89 + k, 72]; }
+  else ids = [cls.did + 3, cls.did, 8, 9, 12, 13, 10, 17, 18, 71, 28];
+  return `<div class="mini">${ids.map((s) => `<span>${esc(statName(s))}<b>${s === 8 || s === 49 ? `${fmtNum(S.get(s))}s` : fmtBig(S.get(s))}</b></span>`).join("")}</div>`;
+}
+function taskChips(cur, attr) {
+  const group = (name, list) => `<div class="fgroup"><span>${name}</span>${list.map((t) => `<button type="button" class="chip" ${attr}="${t.id}" aria-pressed="${t.id === cur}">${esc(t.n)}</button>`).join("")}</div>`;
+  return group("Work", TASK_LIST().filter((t) => t.work)) + group("Combat", TASK_LIST().filter((t) => t.combat));
+}
+const tierSeg = (cur, attr) => `<div class="tierseg" role="group" aria-label="Tier">${Array.from({ length: 9 }, (_, t) => `<button type="button" ${attr}="${t}" aria-pressed="${t === cur}" title="${esc(tierInfo(t))}">T${t}</button>`).join("")}</div>`;
+const CAVEAT = `<p class="caveat">Calculated with the game's own stat, damage and output formulas, checked against in-game hero panels. Assumes Legendary gear at max level with average rolls, job level 30, elixirs up to the aptitude cap, and work skills at the hero's cap. Crowd clear is an estimate, because how many enemies an area attack hits depends on the fight. Random affixes are not included; the affix list shows which ones to look for.</p>`;
+
+const rbState = { tier: 0, task: null, hero: null, pinned: false };
+function heroBuilds(h) {
+  const head = `<h2>Recommended builds <small>${esc(h.n)} · ${esc(tierInfo(rbState.tier))}</small></h2>`;
+  if (!BUILDS) return `<section class="rb">${head}${whenBuilds(() => { if (state.mode === "entry" && state.sel === `heroes-${h.id}`) renderEntry(); })}</section>`;
+  if (rbState.hero !== h.id) { rbState.hero = h.id; if (!rbState.pinned) rbState.task = bestTasks(h.id, rbState.tier)[0][0]; }
+  const task = rbState.task || "single", tier = rbState.tier;
+  const row = recRow(h.id, tier, task);
+  if (!row) return "";
+  const b = rowBuild(h.id, tier, row), rank = rankOf(h.id, tier, task), top = ranking(tier, task)[0];
+  const gear = CALC.SLOTS.map((s) => b.gear[s] ? `<div><span class="sl">${SLOT_N[s]}</span><span>${ln("items", b.gear[s].id)}</span></div>` : "").join("");
+  const sets = activeSets(b);
+  const aff = CALC.affixPriority(b, taskOf(task));
+  const strengths = bestTasks(h.id, tier).slice(0, 6);
+  return `<section class="rb">${head}
+    <div class="rbctl"><div class="fgroup"><span>Tier</span>${tierSeg(tier, "data-rbt")}</div>${taskChips(task, "data-rbk")}</div>
+    <div class="score"><span class="big">${fmtScore(task, row[7])}</span><span>${esc(taskOf(task).n)} · ${taskUnit(task)}</span><span class="rank">#${rank} of ${D.heroes.length}</span>${top && top[0] !== h.id ? `<span class="note">${Math.round((100 * row[7]) / top[1])}% of the best hero (${esc(T("heroes", top[0]).n)})</span>` : `<span class="note">Best hero for this task at T${tier}</span>`}</div>
+    <div class="rbgrid">
+      <div class="gear"><div class="sl" style="display:block">Class plan</div>${pathHtml(classLine(b.cls))}<p class="note" style="margin:0 0 8px">Train ${esc(clsName(b.cls))} to job level 30.</p>
+        <div class="sl" style="display:block">Gear</div>${gear}${sets.length ? `<p class="note" style="margin-top:4px">Set bonus: ${sets.join(" · ")}</p>` : ""}</div>
+      <div class="gear"><div class="sl" style="display:block">Key stats</div>${keyStats(b, task)}
+        ${aff.length ? `<div class="sl" style="display:block;margin-top:8px">Affixes worth chasing</div><div class="links">${aff.map(([s, g]) => `<span class="pill">${esc(statName(s))} <span class="num">+${(g * 100).toFixed(1)}%</span></span>`).join("")}</div>` : ""}
+        <div class="sl" style="display:block;margin-top:8px">Best at (T${tier})</div><div class="besttasks">${strengths.map(([t, r]) => `<button type="button" data-rbk="${t}">${esc(taskOf(t).n)}<b>#${r}</b></button>`).join("")}</div></div>
+    </div>
+    <div class="btnrow"><button type="button" class="tbtn primary" data-bopen="${h.id}:${tier}:${task}">Open in builder</button><button type="button" class="tbtn" data-cat="besthero">Compare heroes</button></div>
+    ${CAVEAT}</section>`;
+}
+
+function viewBest() {
+  if (!BUILDS) return whenBuilds(() => { if (state.cat === "besthero" && state.mode === "browse") renderBrowse(); });
+  const tier = rbState.tier, task = rbState.task || "single";
+  const list = ranking(tier, task), top = list[0] ? list[0][1] : 1;
+  const shown = list.slice(0, bestLimit);
+  return `<div class="rbctl" style="margin-bottom:14px"><div class="fgroup"><span>Tier</span>${tierSeg(tier, "data-rbt")}</div>${taskChips(task, "data-rbk")}<p class="note" style="margin:0">${esc(tierInfo(tier))}. Score: ${taskUnit(task)}.</p></div>
+    <div class="tscroll" style="background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r)"><table class="t"><tr><th class="num">#</th><th>Hero</th><th>Class</th><th class="num">${esc(taskOf(task).n)}</th><th style="width:22%"></th><th></th></tr>
+    ${shown.map(([hid, v, cls], i) => `<tr><td class="num">${i + 1}</td><td>${ln("heroes", hid)}</td><td>${ln("classes", cls)}</td><td class="num">${fmtScore(task, v)}</td><td><div class="bar"><i style="width:${(100 * v) / top}%"></i></div></td><td><button type="button" class="tbtn" data-bopen="${hid}:${tier}:${task}">Build</button></td></tr>`).join("")}</table></div>
+    ${list.length > shown.length ? `<button type="button" class="chip more" data-bestmore="1">Show all ${list.length}</button>` : ""}${CAVEAT}`;
+}
+let bestLimit = 50;
+
+/* builder */
+let BS = null;
+function builderFrom(heroId, tier, task) {
+  const a = BSTDCalc.tierDefaults(tier);
+  const row = BUILDS && recRow(heroId, tier, task);
+  const h = T("heroes", heroId);
+  const gear = {};
+  if (row) row.slice(1, 7).forEach((id, i) => { if (id) gear[i + 1] = Object.assign(CALC.gearPiece(id, a), { affix: [] }); });
+  return { hero: heroId, tier, task, cls: row ? row[0] : h.cls, level: a.level, job: a.job, q: a.quality, coreGrade: a.coreGrade, elixirs: true, skillMode: "cap", gear };
+}
+function calcBuild(s) {
+  const h = T("heroes", s.hero);
+  return { hero: s.hero, cls: s.cls, level: s.level, job: s.job, stage: s.tier, gearTier: s.tier + 1, coreGrade: s.coreGrade, elixirs: s.elixirs,
+    skills: h.skills.map(([start, cap]) => (s.skillMode === "cap" ? cap : start)), talents: h.talents, gear: s.gear };
+}
+const opt = (v, label, cur) => `<option value="${esc(v)}"${String(v) === String(cur) ? " selected" : ""}>${esc(label)}</option>`;
+function slotOptions(slot, cur, tier) {
+  const items = D.items.filter((i) => i.sl === slot && i.tier <= tier + 1 && ["Equipment", "Set piece", "Core", "Treasure"].includes(i.cat)).sort((a, b) => b.tier - a.tier || a.id - b.id);
+  const groups = {};
+  items.forEach((i) => (groups[i.tier] = groups[i.tier] || []).push(i));
+  return opt("", "— empty —", cur ? "x" : "") + Object.keys(groups).sort((a, b) => b - a).map((t) => `<optgroup label="${esc(tierName(+t))}">${groups[t].map((i) => opt(i.id, i.n + (i.set ? ` · ${(T("sets", i.set) || {}).n} set` : ""), cur)).join("")}</optgroup>`).join("");
+}
+const AFFIX_STATS = () => D.stats.filter((s) => s.id > 3 && !(s.id >= 104 && s.id <= 109) && s.id !== 14);
+function viewBuilder() {
+  if (!BS) {
+    if (!BUILDS) return whenBuilds(() => { if (state.cat === "builder" && state.mode === "browse") renderBrowse(); });
+    const h = T("heroes", 207) || D.heroes[0];
+    BS = builderFrom(h.id, 0, "mine");
+  }
+  const s = BS, h = T("heroes", s.hero), b = calcBuild(s), S = CALC.panel(b);
+  const heroes = D.heroes.slice().sort((a, x) => a.n.localeCompare(x.n));
+  const classes = D.classes.slice().sort((a, x) => a.tier - x.tier || a.id - x.id);
+  const form = `<div class="form">
+    <div class="flabel"><span id="bhero-l">Hero</span><div class="combo"><input type="text" data-bs="heroq" role="combobox" aria-labelledby="bhero-l" aria-controls="bheroes" aria-expanded="false" aria-autocomplete="none" autocomplete="off" spellcheck="false" value="${esc(`${h.n} ${h.cn}`)}" placeholder="Type a name (English or 中文)">
+      <ul id="bheroes" class="combo-list" role="listbox" aria-labelledby="bhero-l" hidden>${heroes.map((x) => `<li id="bh-${x.id}" role="option" aria-selected="false" data-hid="${x.id}" data-key="${esc(`${x.n.toLowerCase()}|${x.cn}`)}"${x.id === s.hero ? ` class="cur"` : ""}>${sprite("hero", x.icon, 24, x.n)}<span>${esc(x.n)}</span><i>${esc(x.cn)}</i></li>`).join("")}</ul></div></div>
+    <label>Tier<select data-bs="tier">${Array.from({ length: 9 }, (_, t) => opt(t, `T${t} · up to Lv ${30 * (t + 1)}`, s.tier)).join("")}</select></label>
+    <label>Class<select data-bs="cls">${classes.map((c) => opt(c.id, `R${c.tier} ${c.n}`, s.cls)).join("")}</select></label>
+    <label>Level<input type="number" min="1" max="270" data-bs="level" value="${s.level}"></label>
+    <label>Job level<input type="number" min="1" max="30" data-bs="job" value="${s.job}"></label>
+    <label>Work skills<select data-bs="skillMode">${opt("cap", "At hero's cap", s.skillMode)}${opt("start", "Starting levels", s.skillMode)}</select></label>
+    <label>Elixirs<select data-bs="elixirs">${opt("1", "Up to the cap", s.elixirs ? "1" : "0")}${opt("0", "None", s.elixirs ? "1" : "0")}</select></label>
+    <label>Core grade<select data-bs="coreGrade">${[1, 2, 3, 4, 5, 6].map((g) => opt(g, `Grade ${g}`, s.coreGrade)).join("")}</select></label>
+  </div>`;
+  const slots = CALC.SLOTS.map((sl) => {
+    const g = s.gear[sl];
+    const affHead = g && (g.affix || []).length ? `<div class="affhead"><span>Affix stat</span><span>Roll</span><span></span></div>` : "";
+    const aff = g ? affHead + (g.affix || []).map(([st, r], i) => `<div class="affix"><select data-baf="${sl}:${i}:stat">${AFFIX_STATS().map((x) => opt(x.id, x.n, st)).join("")}</select><input type="number" step="1" data-baf="${sl}:${i}:roll" value="${r}" title="Affix roll"><button type="button" data-bdelaff="${sl}:${i}" aria-label="Remove affix">×</button></div>`).join("") : "";
+    const it = g && T("items", g.id);
+    const icon = it ? `<a class="gicon q${g.q}" href="#items-${it.id}" data-go="items-${it.id}" title="${esc(it.n)} · ${esc(D.meta.quality[g.q])}">${iconOf("items", it, 36)}</a>` : `<span class="gicon empty" aria-hidden="true"></span>`;
+    return `<div class="slotrow"><span class="sl">${SLOT_N[sl]}</span>${icon}<select data-bg="${sl}:id">${slotOptions(sl, g && g.id, s.tier)}</select>
+      ${g ? `<select data-bg="${sl}:q">${[1, 2, 3, 4, 5, 6].map((q) => opt(q, D.meta.quality[q], g.q)).join("")}</select><input class="lv" type="number" min="0" max="35" data-bg="${sl}:lv" value="${g.lv}" title="Upgrade level">
+      <div class="affixes"><div class="links">${ln("items", it.id)}${it.set ? ln("sets", it.set) : ""}</div>${aff}${(g.affix || []).length < Math.max(0, g.q - 1) ? `<button type="button" class="addaff" data-baddaff="${sl}">+ Affix</button>` : ""}</div>` : ""}</div>`;
+  }).join("");
+  const scores = TASK_LIST().map((t) => {
+    const v = CALC.score(b, t).score, row = BUILDS && recRow(s.hero, s.tier, t.id);
+    const pct = row && row[7] ? Math.round((100 * v) / row[7]) : null;
+    return `<tr class="${t.id === s.task ? "cur" : ""}"><td>${esc(t.n)}</td><td class="num">${fmtScore(t.id, v)}</td><td class="num">${pct == null ? "" : `${pct}%`}</td><td style="width:30%"><div class="bar"><i style="width:${Math.min(100, pct || 0)}%"></i></div></td></tr>`;
+  }).join("");
+  const groups = [["Aptitude", [1, 2, 3]], ["Combat", [T("classes", s.cls).did + 3, 8, 9, 10, 11, 12, 13]], ["Work", [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52]]];
+  const shown = new Set(groups.flatMap((g) => g[1]));
+  const extra = D.stats.filter((x) => !shown.has(x.id) && !(x.id >= 4 && x.id <= 7) && x.id !== 14 && !(x.id >= 104 && x.id <= 109) && Math.abs(S.get(x.id) - (x.fmt === "mult" || (x.id >= 77 && x.id <= 80) || (x.id >= 90 && x.id <= 103) ? 1 : 0)) > 1e-9);
+  const statHtml = groups.map(([n, ids]) => `<div><div class="sl" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)">${n}</div><div class="mini">${ids.map((i) => `<span>${esc(statName(i))}<b>${i === 8 || i === 49 ? `${fmtNum(S.get(i))}s` : fmtBig(S.get(i))}</b></span>`).join("")}</div></div>`).join("")
+    + (extra.length ? `<div><div class="sl" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)">Bonuses</div><div class="mini">${extra.map((x) => `<span>${esc(x.n)}<b>${statVal(x.id, Math.round(S.get(x.id) * 100) / 100)}</b></span>`).join("")}</div></div>` : "");
+  const sets = activeSets(b);
+  return `<div class="bld">
+    <div class="panel"><div class="bhead"><a class="portrait" href="#heroes-${h.id}" data-go="heroes-${h.id}" title="Open hero page">${sprite("hero", h.icon, 88, h.n)}</a>
+        <div><b><a href="#heroes-${h.id}" data-go="heroes-${h.id}" style="color:inherit">${esc(h.n)}</a></b><i>${esc(h.cn)}</i><div class="links">${ln("classes", s.cls)}<span class="pill">T${s.tier} · Lv ${s.level}</span>${qpill(Math.max(1, h.rarity), h.rarityN)}</div></div></div>
+      <h3>Hero and class</h3>${form}
+      <h3>Gear</h3><div><div class="slotrow slothead" aria-hidden="true"><span>Slot</span><span></span><span>Item</span><span>Quality</span><span class="lv">Level</span></div>${slots}</div>
+      <div class="btnrow"><label class="note" style="display:flex;gap:6px;align-items:center;margin:0">Optimize for <select data-bs="task">${TASK_LIST().map((t) => opt(t.id, t.n, s.task)).join("")}</select></label>
+        <button type="button" class="tbtn primary" id="bopt">Optimize</button><button type="button" class="tbtn" id="bcopy">Copy link</button><button type="button" class="tbtn" data-go="heroes-${h.id}">Hero page</button></div>
+      <p class="caveat">Optimize picks the best class up to rank ${Math.min(6, s.tier + 3)} and the best gear and sets for the tier, keeping your level, job level, core grade and quality settings. Affixes are random in game, so add the ones you actually have.</p></div>
+    <div class="panel"><h3>Scores</h3><div class="tscroll"><table class="t tasks"><tr><th>Task</th><th class="num">Score</th><th class="num" title="Compared with this hero's recommended build for the tier">vs rec.</th><th></th></tr>${scores}</table></div>
+      <h3>Stats</h3>${statHtml}
+      ${sets.length ? `<h3>Set bonuses</h3><div>${sets.join("<br>")}</div>` : ""}
+      <h3>Class line</h3>${pathHtml(classLine(s.cls))}
+      <p class="caveat">Extra Target has no effect in the current game version, so it is left out. Crowd clear is an estimate.</p></div>
+  </div>`;
+}
+function builderCode(s) {
+  const c = [s.hero, s.tier, s.task, s.cls, s.level, s.job, s.coreGrade, s.elixirs ? 1 : 0, s.skillMode === "cap" ? 1 : 0,
+    CALC.SLOTS.map((sl) => { const g = s.gear[sl]; return g ? [g.id, g.q, g.lv, ...(g.affix || []).flat()].join(".") : ""; }).join("_")];
+  return c.join("~");
+}
+function builderParse(code) {
+  const p = code.split("~");
+  if (p.length < 10) return null;
+  const [hero, tier, task, cls, level, job, cg, el, sk, gear] = p;
+  const s = { hero: +hero, tier: Math.max(0, Math.min(8, +tier)), task: taskOf(task) ? task : "single", cls: +cls, level: +level, job: +job, coreGrade: +cg || 1, elixirs: el === "1", skillMode: sk === "1" ? "cap" : "start", q: 5, gear: {} };
+  if (!T("heroes", s.hero) || !T("classes", s.cls)) return null;
+  gear.split("_").forEach((g, i) => {
+    if (!g) return;
+    const [id, q, lv, ...af] = g.split(".").map(Number);
+    if (!T("items", id)) return;
+    const affix = [];
+    for (let k = 0; k + 1 < af.length; k += 2) affix.push([af[k], af[k + 1]]);
+    s.gear[i + 1] = { id, q, lv, roll: 65 + 30 * q, affix };
+  });
+  return s;
+}
+function openBuilder(heroId, tier, task) {
+  loadBuilds().then(() => {
+    BS = builderFrom(heroId, tier, task);
+    setCat("builder");
+    setHash(`builder~${builderCode(BS)}`);
+  });
+}
+// Exact "Name 中文" from the list, else the only hero whose name contains the text.
+function findHero(v) {
+  const q = v.trim().toLowerCase();
+  if (!q) return null;
+  const exact = D.heroes.find((h) => `${h.n} ${h.cn}`.toLowerCase() === q || h.n.toLowerCase() === q || h.cn === q);
+  if (exact) return exact;
+  const part = D.heroes.filter((h) => h.n.toLowerCase().includes(q) || h.cn.includes(q));
+  return part.length === 1 ? part[0] : null;
+}
+function builderChange(el) {
+  const s = BS;
+  if (el.dataset.bs) {
+    const k = el.dataset.bs, v = el.value;
+    if (k === "heroq") {
+      const h = findHero(v);
+      if (!h) { renderBrowse(); return; }	// no match: put the current hero back
+      if (h.id !== s.hero) { s.hero = h.id; s.cls = h.cls; }
+    }
+    else if (k === "hero") { s.hero = +v; s.cls = T("heroes", s.hero).cls; }
+    else if (k === "tier") { s.tier = +v; s.level = 30 * (s.tier + 1); }
+    else if (k === "elixirs") s.elixirs = v === "1";
+    else if (k === "skillMode" || k === "task") s[k] = v;
+    else s[k] = Math.max(1, Number(v) || 1);
+  }
+  else if (el.dataset.bg) {
+    const [sl, f] = el.dataset.bg.split(":");
+    if (f === "id") {
+      if (!el.value) delete s.gear[sl];
+      else { const old = s.gear[sl]; s.gear[sl] = Object.assign(CALC.gearPiece(+el.value, { quality: old ? old.q : s.q }), { affix: old ? old.affix || [] : [] }); }
+    }
+    else if (f === "q") { const q = +el.value, g = s.gear[sl]; Object.assign(g, CALC.gearPiece(g.id, { quality: q }), { affix: (g.affix || []).slice(0, q - 1) }); }
+    else s.gear[sl].lv = Math.max(0, Number(el.value) || 0);
+  }
+  else if (el.dataset.baf) {
+    const [sl, i, f] = el.dataset.baf.split(":");
+    s.gear[sl].affix[i][f === "stat" ? 0 : 1] = Number(el.value) || 0;
+  }
+  setHash(`builder~${builderCode(s)}`);
+  renderBrowse();
+}
+
 /* ---------- state & rendering ---------- */
 const state = { cat: "items", filters: {}, q: "", sel: null, mode: "browse", limit: 200, sort: {}, grid: {} };
 const hist = [];            // previously opened entries, for the Back button
@@ -596,11 +932,13 @@ function savePrefs() { store("btc-prefs", { cat: state.cat, grid: state.grid });
 const GROUPS = [...new Set(CATS.map((c) => c.g))];
 
 function renderNav() {
-  const g = CAT[state.cat].g;
+  // An open entry shows the tab of its own category, even when it was opened from a chart or the builder.
+  const cur = state.mode === "entry" && state.sel ? parseTok(state.sel)[0] : state.cat;
+  const g = CAT[cur].g;
   $("#groups").innerHTML = GROUPS.map((x) => `<button type="button" data-group="${esc(x)}" aria-current="${x === g && !state.q}">${esc(x)}</button>`).join("");
   $("#subnav").innerHTML = CATS.filter((c) => c.g === g).map((c) => {
     const n = c.count ? c.count() : D[c.k].length;
-    return `<button type="button" data-cat="${c.k}" aria-current="${state.cat === c.k && !state.q && state.mode === "browse"}">${esc(c.t)}<span>${n}</span></button>`;
+    return `<button type="button" data-cat="${c.k}" aria-current="${cur === c.k && !state.q}">${esc(c.t)}<span>${n}</span></button>`;
   }).join("");
 }
 function matches(x, q) {
@@ -691,8 +1029,8 @@ function renderEntry() {
   const isStar = starred(state.sel);
   $("#main").innerHTML = `<article>
     <div class="crumbs"><button type="button" class="tbtn" id="back">← ${esc(prev ? prev : listName)}</button>${prev ? `<button type="button" class="tbtn" id="tolist">${esc(listName)}</button>` : ""}<span class="sp"></span><button type="button" class="tbtn" id="star" aria-pressed="${isStar}">${isStar ? "★ Starred" : "☆ Star"}</button></div>
-    <header class="ehead"><div class="portrait">${iconOf(k, x, big)}</div><div><div class="kind">${esc(CAT[k].t.replace(/s$/, ""))}</div><h1>${esc(x.n)}</h1><div class="cn">${esc(x.cn)}</div>${lede ? `<p class="lede">${lede}</p>` : ""}</div></header>
-    <div class="ebody">${body}</div></article>`;
+    <header class="ehead"><div class="portrait">${iconOf(k, x, big)}</div><div><div class="kind">${esc(KIND[k] || CAT[k].t)}</div><h1>${esc(x.n)}</h1><div class="cn">${esc(x.cn)}</div>${lede ? `<p class="lede">${lede}</p>` : ""}</div></header>
+    ${k === "heroes" ? heroBuilds(x) : ""}<div class="ebody">${body}</div></article>`;
 }
 function render() {
   renderNav();
@@ -729,9 +1067,31 @@ function back() {
 }
 
 document.addEventListener("click", (e) => {
-  const t = e.target.closest("[data-go],[data-cat],[data-group],[data-f],[data-view],[data-home],#more,#back,#tolist,#star");
+  const t = e.target.closest("[data-go],[data-cat],[data-group],[data-f],[data-view],[data-home],#more,#back,#tolist,#star,[data-rbt],[data-rbk],[data-bopen],[data-bestmore],[data-baddaff],[data-bdelaff],#bopt,#bcopy");
   if (!t) return;
   e.preventDefault();
+  if (t.dataset.rbt != null || t.dataset.rbk != null) {
+    if (t.dataset.rbt != null) rbState.tier = +t.dataset.rbt;
+    else { rbState.task = t.dataset.rbk; rbState.pinned = true; }
+    bestLimit = 50;
+    if (state.mode === "entry") renderEntry(); else renderBrowse();
+    return;
+  }
+  if (t.dataset.bopen) { const [h, tier, task] = t.dataset.bopen.split(":"); openBuilder(+h, +tier, task); return; }
+  if (t.dataset.bestmore) { bestLimit = 1e9; renderBrowse(); return; }
+  if (t.dataset.baddaff) { const g = BS.gear[t.dataset.baddaff]; (g.affix = g.affix || []).push([AFFIX_STATS()[0].id, 35 + 10 * g.q]); setHash(`builder~${builderCode(BS)}`); renderBrowse(); return; }
+  if (t.dataset.bdelaff) { const [sl, i] = t.dataset.bdelaff.split(":"); BS.gear[sl].affix.splice(+i, 1); setHash(`builder~${builderCode(BS)}`); renderBrowse(); return; }
+  if (t.id === "bopt") {
+    const r = CALC.optimize(BS.hero, BS.tier, BS.task, { level: BS.level, job: BS.job, quality: BS.q, coreGrade: BS.coreGrade, elixirs: BS.elixirs });
+    if (r) { BS.cls = r.build.cls; BS.gear = {}; Object.entries(r.build.gear).forEach(([sl, g]) => { BS.gear[sl] = Object.assign({}, g, { affix: [] }); }); }
+    setHash(`builder~${builderCode(BS)}`); renderBrowse(); return;
+  }
+  if (t.id === "bcopy") {
+    const url = location.href.split("#")[0] + `#builder~${builderCode(BS)}`;
+    const done = () => { t.textContent = "Link copied"; setTimeout(() => { t.textContent = "Copy link"; }, 1600); };
+    try { navigator.clipboard.writeText(url).then(done, () => prompt("Copy this link", url)); } catch { prompt("Copy this link", url); }
+    return;
+  }
   if (t.id === "more") { state.limit += 200; renderBrowse(); return; }
   if (t.id === "back") { back(); return; }
   if (t.id === "tolist") { toList(); return; }
@@ -747,7 +1107,74 @@ document.addEventListener("click", (e) => {
   go(t.dataset.go);
 });
 document.addEventListener("change", (e) => {
+  if (e.target.dataset.bs === "heroq") return;	// the combobox picks heroes itself
+  if (BS && (e.target.dataset.bs || e.target.dataset.bg || e.target.dataset.baf)) { builderChange(e.target); return; }
   if (e.target.id === "sort") { state.sort[state.cat] = e.target.value || null; state.limit = 200; renderBrowse(); }
+});
+/* Hero combobox: the list always shows every hero; typing jumps to and highlights the first match. */
+function combo() {
+  const input = document.querySelector('[data-bs="heroq"]');
+  return input && { input, list: document.getElementById("bheroes") };
+}
+function comboHl(li) {
+  const c = combo();
+  if (!c) return;
+  c.list.querySelectorAll("li.hl").forEach((x) => { x.classList.remove("hl"); x.setAttribute("aria-selected", "false"); });
+  if (!li) { c.input.removeAttribute("aria-activedescendant"); return; }
+  li.classList.add("hl"); li.setAttribute("aria-selected", "true");
+  c.input.setAttribute("aria-activedescendant", li.id);
+  const top = li.offsetTop, bottom = top + li.offsetHeight;
+  if (top < c.list.scrollTop || bottom > c.list.scrollTop + c.list.clientHeight) c.list.scrollTop = Math.max(0, top - c.list.clientHeight / 3);
+}
+function comboOpen() {
+  const c = combo();
+  if (!c || !c.list.hidden) return;
+  c.list.hidden = false;
+  c.input.setAttribute("aria-expanded", "true");
+  comboHl(document.getElementById(`bh-${BS.hero}`));
+}
+function comboClose() {
+  const c = combo();
+  if (!c) return;
+  c.list.hidden = true;
+  c.input.setAttribute("aria-expanded", "false");
+  const h = T("heroes", BS.hero);
+  c.input.value = `${h.n} ${h.cn}`;
+}
+function comboPick(id) {
+  if (id === BS.hero) { comboClose(); return; }
+  const h = T("heroes", id);
+  BS.hero = id; BS.cls = h.cls;
+  setHash(`builder~${builderCode(BS)}`);
+  renderBrowse();
+}
+// First hero whose name starts with the text, else one with a word starting with it, else one containing it.
+function comboMatch(text) {
+  const q = text.trim().toLowerCase(), c = combo();
+  if (!q || !c) return null;
+  const items = [...c.list.children], keys = items.map((li) => li.dataset.key.split("|"));
+  const tests = [([n, cn]) => n.startsWith(q) || cn.startsWith(q), ([n]) => n.split(" ").some((w) => w.startsWith(q)), ([n, cn]) => n.includes(q) || cn.includes(q)];
+  for (const t of tests) { const i = keys.findIndex(t); if (i >= 0) return items[i]; }
+  return null;
+}
+document.addEventListener("input", (e) => {
+  if (!BS || e.target.dataset.bs !== "heroq") return;
+  comboOpen();
+  comboHl(comboMatch(e.target.value));
+});
+document.addEventListener("focusin", (e) => {
+  if (!BS || e.target.dataset.bs !== "heroq") return;
+  comboOpen();
+  e.target.select();
+});
+document.addEventListener("focusout", (e) => {
+  if (BS && e.target.dataset.bs === "heroq") comboClose();
+});
+document.addEventListener("mousedown", (e) => {
+  const li = e.target.closest("#bheroes li");
+  if (!li) return;
+  e.preventDefault();	// keep focus in the input so focusout does not close the list first
+  comboPick(+li.dataset.hid);
 });
 let qt;
 $("#q").addEventListener("input", (e) => {
@@ -757,6 +1184,17 @@ $("#q").addEventListener("input", (e) => {
 document.addEventListener("keydown", (e) => {
   const ae = document.activeElement;
   const inField = /^(INPUT|SELECT|TEXTAREA)$/.test(ae?.tagName || "");
+  if (BS && ae && ae.dataset && ae.dataset.bs === "heroq" && ["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(e.key)) {
+    e.preventDefault();
+    const c = combo();
+    comboOpen();
+    const cur = c.list.querySelector("li.hl");
+    if (e.key === "ArrowDown") comboHl(cur ? cur.nextElementSibling || cur : c.list.firstElementChild);
+    else if (e.key === "ArrowUp") comboHl(cur ? cur.previousElementSibling || cur : c.list.lastElementChild);
+    else if (e.key === "Enter") { if (cur) comboPick(+cur.dataset.hid); }
+    else { comboClose(); ae.select(); }
+    return;
+  }
   if (e.key === "/" && !inField) { e.preventDefault(); $("#q").focus(); $("#q").select(); return; }
   if (e.key === "Escape") {
     if (inField && $("#q").value) { $("#q").value = ""; state.q = ""; state.mode = "browse"; render(); return; }
@@ -778,9 +1216,14 @@ fetch("compendium.json").then((r) => r.json()).then((data) => {
   D = data;
   for (const c of DATA_CATS) by[c.k] = new Map(D[c.k].map((x) => [x.id, x]));
   D._gov = new Set(D.locs.filter((l) => l.gov).map((l) => l.gov));
+  CALC = BSTDCalc.make(D);
   if (prefs.cat && CAT[prefs.cat]) state.cat = prefs.cat;
   const h = (location.hash || "").slice(1);
   if (CAT[h]) state.cat = h;
+  if (h.startsWith("builder~")) {
+    state.cat = "builder";
+    loadBuilds().then(() => { BS = builderParse(decodeURIComponent(h.slice(8))); if (state.cat === "builder" && state.mode === "browse") renderBrowse(); }).catch(() => {});
+  }
   if (h && /^[a-z]+-\d+$/.test(h) && by[parseTok(h)[0]]) { state.cat = parseTok(h)[0]; go(h, { noHash: true }); }
   else render();
 }).catch(() => { $("#main").innerHTML = `<div class="empty">The data file failed to load. Reload the page to try again.</div>`; });
